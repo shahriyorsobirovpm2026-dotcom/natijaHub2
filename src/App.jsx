@@ -250,10 +250,15 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
   const [form, setForm] = useState({ email:"", password:"", full_name:"", university:"", company_name:"" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+  const [showReset, setShowReset] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
   const f = k => ({ value:form[k], onChange:e=>setForm({...form,[k]:e.target.value}) });
 
   const submit = async () => {
-    setLoading(true); setError("");
+    setLoading(true); setError(""); setSuccess("");
     try {
       if (mode === "login") {
         const { data, error } = await supabase.auth.signInWithPassword({ email:form.email, password:form.password });
@@ -271,6 +276,66 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
     setLoading(false);
   };
 
+  const sendReset = async () => {
+    if (!resetEmail) { setError("Emailni kiriting"); return; }
+    setLoading(true); setError("");
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: window.location.origin,
+      });
+      if (error) throw error;
+      setResetSent(true);
+    } catch (err) { setError(err.message); }
+    setLoading(false);
+  };
+
+  // Parol tiklash sahifasi
+  if (showReset) {
+    return (
+      <div style={{ minHeight:"100vh",background:C.light,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20 }}>
+        <div style={{ textAlign:"center",marginBottom:24 }}>
+          <div style={{ fontFamily:"Georgia,serif",fontSize:24,fontWeight:700,color:C.primary }}>Natija<span style={{ color:C.accent }}>Hub</span></div>
+          <div style={{ color:C.muted,fontSize:13,marginTop:4 }}>Parolni tiklash</div>
+        </div>
+        <Card style={{ width:"100%",maxWidth:400,padding:24 }}>
+          {resetSent ? (
+            <div style={{ textAlign:"center",padding:"16px 0" }}>
+              <div style={{ fontSize:40,marginBottom:12 }}>📧</div>
+              <div style={{ fontWeight:700,fontSize:16,color:C.primary,marginBottom:8 }}>Email yuborildi!</div>
+              <div style={{ fontSize:13,color:C.muted,lineHeight:1.6,marginBottom:20 }}>
+                <strong>{resetEmail}</strong> manziliga parol tiklash havolasi yuborildi. Emailingizni tekshiring.
+              </div>
+              <Btn full onClick={()=>{ setShowReset(false); setResetSent(false); setResetEmail(""); }} color={C.primary}>
+                Kirishga qaytish
+              </Btn>
+            </div>
+          ) : (
+            <>
+              <div style={{ fontWeight:700,fontSize:16,color:C.primary,marginBottom:6 }}>Parolni tiklash</div>
+              <div style={{ fontSize:13,color:C.muted,marginBottom:16,lineHeight:1.5 }}>
+                Emailingizni kiriting — parol tiklash havolasini yuboramiz.
+              </div>
+              <Input
+                label="Email"
+                type="email"
+                value={resetEmail}
+                onChange={e=>setResetEmail(e.target.value)}
+                placeholder="email@gmail.com"
+              />
+              {error && <div style={{ background:C.red+"15",color:C.red,padding:"9px 12px",borderRadius:9,fontSize:12,marginBottom:12 }}>{error}</div>}
+              <Btn full onClick={sendReset} disabled={loading} color={C.accent}>
+                {loading ? "Yuborilmoqda..." : "Havola yuborish"}
+              </Btn>
+              <button onClick={()=>{ setShowReset(false); setError(""); }} style={{ width:"100%",background:"transparent",border:"none",color:C.muted,fontSize:12,marginTop:12,cursor:"pointer",fontFamily:"inherit" }}>
+                ← Orqaga
+              </button>
+            </>
+          )}
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight:"100vh",background:C.light,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20 }}>
       <div style={{ textAlign:"center",marginBottom:24 }}>
@@ -280,7 +345,7 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
       <Card style={{ width:"100%",maxWidth:400,padding:24 }}>
         <div style={{ display:"flex",background:C.light,borderRadius:10,padding:3,marginBottom:20 }}>
           {[["login","Kirish"],["register","Ro'yxat"]].map(([m,l])=>(
-            <button key={m} onClick={()=>setMode(m)} style={{ flex:1,background:mode===m?C.primary:"transparent",color:mode===m?"#fff":C.muted,border:"none",borderRadius:8,padding:"8px 0",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit" }}>{l}</button>
+            <button key={m} onClick={()=>{ setMode(m); setError(""); }} style={{ flex:1,background:mode===m?C.primary:"transparent",color:mode===m?"#fff":C.muted,border:"none",borderRadius:8,padding:"8px 0",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit" }}>{l}</button>
           ))}
         </div>
         {mode === "register" && (
@@ -299,7 +364,15 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
         <Input label="Parol" type="password" {...f("password")} placeholder="Kamida 6 belgi" />
         {error && <div style={{ background:C.red+"15",color:C.red,padding:"9px 12px",borderRadius:9,fontSize:12,marginBottom:12 }}>{error}</div>}
         <Btn full onClick={submit} disabled={loading}>{loading?"Kuting...":mode==="login"?"Kirish":"Ro'yxatdan o'tish"}</Btn>
-        {onBack && <button onClick={onBack} style={{ width:"100%",background:"transparent",border:"none",color:C.muted,fontSize:12,marginTop:12,cursor:"pointer",fontFamily:"inherit" }}>← Orqaga</button>}
+
+        {/* Parolni unutdim */}
+        {mode === "login" && (
+          <button onClick={()=>{ setShowReset(true); setResetEmail(form.email); setError(""); }} style={{ width:"100%",background:"transparent",border:"none",color:C.accent,fontSize:12,marginTop:12,cursor:"pointer",fontFamily:"inherit",textDecoration:"underline" }}>
+            Parolni unutdim?
+          </button>
+        )}
+
+        {onBack && <button onClick={onBack} style={{ width:"100%",background:"transparent",border:"none",color:C.muted,fontSize:12,marginTop:8,cursor:"pointer",fontFamily:"inherit" }}>← Orqaga</button>}
       </Card>
     </div>
   );
@@ -1081,3 +1154,4 @@ export default function App() {
     </AuthContext.Provider>
   );
 }
+
