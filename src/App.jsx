@@ -12,7 +12,7 @@ const AuthContext = createContext(null);
 
 const MOCK_INTERNSHIPS = [
   { id:1, company_name:"Tasweer Academy", company_logo:"📸", role:"Marketing Intern", skills:["SMM","Content","Canva"], duration:"3 oy", type:"Gibrid", description:"Ijtimoiy tarmoqlar uchun kontent tayyorlash.", is_active:true },
-  { id:2, company_name:"Shiraq Business School", company_logo:"🏫", role:"HR Assistant Intern", skills:["HR","Recruitment","Excel"], duration:"2 oy", type:"Ofis", description:"Kadrlar bo'limida recruitment va onboarding.", is_active:true },
+  { id:2, company_name:"NatijaHub", company_logo:"🏫", role:"HR Assistant Intern", skills:["HR","Recruitment","Excel"], duration:"2 oy", type:"Ofis", description:"Kadrlar bo'limida recruitment va onboarding.", is_active:true },
   { id:3, company_name:"TechUz Startup", company_logo:"💻", role:"Business Analyst Intern", skills:["Excel","Analytics","Reporting"], duration:"2 oy", type:"Remote", description:"Biznes jarayonlarni tahlil qilish.", is_active:true },
 ];
 
@@ -244,6 +244,54 @@ function LandingPage({ onLogin, onRegister }) {
 }
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
+function ResetPasswordScreen({ onDone }) {
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
+
+  const handleReset = async () => {
+    if (password !== confirm) { setError("Parollar mos kelmadi!"); return; }
+    if (password.length < 6) { setError("Parol kamida 6 belgi bo'lishi kerak!"); return; }
+    setLoading(true); setError("");
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw error;
+      setDone(true);
+      setTimeout(() => onDone(), 2500);
+    } catch (err) { setError(err.message); }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ minHeight:"100vh", background:C.light, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:20 }}>
+      <div style={{ textAlign:"center", marginBottom:24 }}>
+        <div style={{ fontFamily:"Georgia,serif", fontSize:24, fontWeight:700, color:C.primary }}>Natija<span style={{ color:C.accent }}>Hub</span></div>
+        <div style={{ color:C.muted, fontSize:13, marginTop:4 }}>Yangi parol o'rnatish</div>
+      </div>
+      <Card style={{ width:"100%", maxWidth:400, padding:24 }}>
+        {done ? (
+          <div style={{ textAlign:"center", padding:"16px 0" }}>
+            <div style={{ fontSize:40, marginBottom:12 }}>✅</div>
+            <div style={{ fontWeight:700, fontSize:16, color:C.green, marginBottom:8 }}>Parol yangilandi!</div>
+            <div style={{ fontSize:13, color:C.muted }}>Tizimga kirishga yo'naltirilmoqda...</div>
+          </div>
+        ) : (
+          <>
+            <div style={{ fontWeight:700, fontSize:16, color:C.primary, marginBottom:16 }}>Yangi parol kiriting</div>
+            <Input label="Yangi parol" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Kamida 6 belgi" />
+            <Input label="Parolni tasdiqlang" type="password" value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Parolni qaytaring" />
+            {error && <div style={{ background:C.red+"15", color:C.red, padding:"9px 12px", borderRadius:9, fontSize:12, marginBottom:12 }}>{error}</div>}
+            <Btn full onClick={handleReset} disabled={loading} color={C.accent}>
+              {loading ? "Saqlanmoqda..." : "Parolni saqlash"}
+            </Btn>
+          </>
+        )}
+      </Card>
+    </div>
+  );
+}
 function AuthScreen({ onAuth, initialMode="login", onBack }) {
   const [mode, setMode] = useState(initialMode);
   const [role, setRole] = useState("student");
@@ -281,7 +329,7 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
     setLoading(true); setError("");
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: window.location.origin,
+        redirectTo: `${window.location.origin}/#/reset-password`,
       });
       if (error) throw error;
       setResetSent(true);
@@ -1074,20 +1122,45 @@ export default function App() {
   const [profile, setProfile] = useState(null);
   const [page, setPage] = useState("home");
   const [authLoading, setAuthLoading] = useState(true);
+  const [isResetPassword, setIsResetPassword] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState("login");
 
   useEffect(()=>{
-    supabase.auth.getSession().then(({data:{session}})=>{
-      if(session?.user){setUser(session.user);loadProfile(session.user.id);}
-      setAuthLoading(false);
-    });
-    const{data:{subscription}}=supabase.auth.onAuthStateChange((_e,session)=>{
-      if(session?.user){setUser(session.user);loadProfile(session.user.id);setShowAuth(false);}
-      else{setUser(null);setProfile(null);}
-    });
-    return()=>subscription.unsubscribe();
-  },[]);
+    const hash = window.location.hash;
+if (hash.includes("reset-password") || hash.includes("type=recovery")) {
+  setIsResetPassword(true);
+
+// Auth state o'zgarishini kuzatish
+const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+
+  // Password reset link bosilganda
+  if (event === "PASSWORD_RECOVERY") {
+    setIsResetPassword(true);
+  }
+ if (session?.user) {
+      setUser(session.user);
+      loadProfile(session.user.id);
+      setLoading(false);
+    } else {
+      setUser(null);
+      setLoading(false);
+    }
+  });
+
+  return () => subscription.unsubscribe();
+}, []);
+  if (session?.user) {
+    setUser(session.user);
+    loadProfile(session.user.id);
+    setLoading(false);
+  } else {
+    setUser(null);
+    setLoading(false);
+  }
+});
+
+return () => subscription.unsubscribe();
 
   const loadProfile=async(uid)=>{
     try {
