@@ -1127,40 +1127,29 @@ export default function App() {
   const [authMode, setAuthMode] = useState("login");
 
   useEffect(()=>{
+    // Hash tekshirish
     const hash = window.location.hash;
-if (hash.includes("reset-password") || hash.includes("type=recovery")) {
-  setIsResetPassword(true);
-
-// Auth state o'zgarishini kuzatish
-const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-
-  // Password reset link bosilganda
-  if (event === "PASSWORD_RECOVERY") {
-    setIsResetPassword(true);
-  }
- if (session?.user) {
-      setUser(session.user);
-      loadProfile(session.user.id);
-      setLoading(false);
-    } else {
-      setUser(null);
-      setLoading(false);
+    if (hash.includes("reset-password") || hash.includes("type=recovery")) {
+      setIsResetPassword(true);
     }
-  });
 
-  return () => subscription.unsubscribe();
-}, []);
-  if (session?.user) {
-    setUser(session.user);
-    loadProfile(session.user.id);
-    setLoading(false);
-  } else {
-    setUser(null);
-    setLoading(false);
-  }
-});
+    // Session tekshirish
+    supabase.auth.getSession().then(({data:{session}})=>{
+      if(session?.user){setUser(session.user);loadProfile(session.user.id);}
+      setAuthLoading(false);
+    });
 
-return () => subscription.unsubscribe();
+    // Auth o'zgarishlarini kuzatish
+    const{data:{subscription}}=supabase.auth.onAuthStateChange((_e,session)=>{
+      if(_e === "PASSWORD_RECOVERY"){
+        setIsResetPassword(true);
+      }
+      if(session?.user){setUser(session.user);loadProfile(session.user.id);setShowAuth(false);}
+      else{setUser(null);setProfile(null);}
+    });
+
+    return()=>subscription.unsubscribe();
+  },[]);
 
   const loadProfile=async(uid)=>{
     try {
@@ -1179,6 +1168,15 @@ return () => subscription.unsubscribe();
 
   if(authLoading)return(
     <div style={{ minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:C.light }}><Spinner /></div>
+  );
+
+  if(isResetPassword)return(
+    <ResetPasswordScreen onDone={()=>{
+      setIsResetPassword(false);
+      window.location.hash="";
+      setShowAuth(true);
+      setAuthMode("login");
+    }} />
   );
 
   if(!user&&!showAuth)return(
@@ -1227,4 +1225,3 @@ return () => subscription.unsubscribe();
     </AuthContext.Provider>
   );
 }
-
