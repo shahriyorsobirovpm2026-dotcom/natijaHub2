@@ -250,6 +250,30 @@ function ResetPasswordScreen({ onDone }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
+
+  useEffect(() => {
+    // URL dan token olish
+    const hash = window.location.hash;
+    const params = new URLSearchParams(hash.replace("#", "?"));
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
+
+    if (accessToken && refreshToken) {
+      supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      }).then(({ error }) => {
+        if (error) {
+          setError("Havola muddati o'tgan. Qayta urinib ko'ring.");
+        } else {
+          setSessionReady(true);
+        }
+      });
+    } else {
+      setError("Havola noto'g'ri. Qayta urinib ko'ring.");
+    }
+  }, []);
 
   const handleReset = async () => {
     if (password !== confirm) { setError("Parollar mos kelmadi!"); return; }
@@ -280,12 +304,21 @@ function ResetPasswordScreen({ onDone }) {
         ) : (
           <>
             <div style={{ fontWeight:700, fontSize:16, color:C.primary, marginBottom:16 }}>Yangi parol kiriting</div>
-            <Input label="Yangi parol" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Kamida 6 belgi" />
-            <Input label="Parolni tasdiqlang" type="password" value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Parolni qaytaring" />
+            {!sessionReady && !error && (
+              <div style={{ textAlign:"center", padding:"16px 0", color:C.muted, fontSize:13 }}>Yuklanmoqda...</div>
+            )}
+            {sessionReady && (
+              <>
+                <Input label="Yangi parol" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Kamida 6 belgi" />
+                <Input label="Parolni tasdiqlang" type="password" value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Parolni qaytaring" />
+              </>
+            )}
             {error && <div style={{ background:C.red+"15", color:C.red, padding:"9px 12px", borderRadius:9, fontSize:12, marginBottom:12 }}>{error}</div>}
-            <Btn full onClick={handleReset} disabled={loading} color={C.accent}>
-              {loading ? "Saqlanmoqda..." : "Parolni saqlash"}
-            </Btn>
+            {sessionReady && (
+              <Btn full onClick={handleReset} disabled={loading} color={C.accent}>
+                {loading ? "Saqlanmoqda..." : "Parolni saqlash"}
+              </Btn>
+            )}
           </>
         )}
       </Card>
