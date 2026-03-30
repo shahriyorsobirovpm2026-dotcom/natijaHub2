@@ -1189,8 +1189,12 @@ export default function App() {
         <div style={{ maxWidth:520,margin:"0 auto",padding:"0 16px 90px" }}>
           {renderPage()}
         </div>
-        <BottomNav page={page} setPage={setPage} role={role} isAdmin={isAdmin} />
-      </div>
+        <BottomNav 
+  page={page} 
+  setPage={setPage} 
+  role={role} 
+  isAdmin={profile?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase()} 
+/>      </div>
     </AuthContext.Provider>
   );
 }
