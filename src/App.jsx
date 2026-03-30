@@ -7,7 +7,7 @@ const C = {
   light: "#F8FAFC", border: "#E2E8F0", card: "#FFFFFF",
 };
 
-const ADMIN_EMAIL = "shahriyorsobirovpm2026@gmail.com";
+const ADMIN_EMAIL = "natijauzodoo@gmail.com";
 const AuthContext = createContext(null);
 
 const MOCK_INTERNSHIPS = [
