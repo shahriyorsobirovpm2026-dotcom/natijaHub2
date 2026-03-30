@@ -435,7 +435,7 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
 
 // ─── NAVBAR ───────────────────────────────────────────────────────────────────
 function Navbar({ profile, onLogout }) {
-  const isAdmin = profile?.email === ADMIN_EMAIL;
+  const isAdmin = profile?.email?.toLowerCase() === ADMIN_EMAIL?.toLowerCase();
   return (
     <nav style={{ background:C.primary,padding:"0 16px",display:"flex",alignItems:"center",justifyContent:"space-between",height:54,position:"sticky",top:0,zIndex:200 }}>
       <div style={{ fontFamily:"Georgia,serif",fontWeight:700,fontSize:17,color:"#fff" }}>
@@ -454,7 +454,7 @@ function Navbar({ profile, onLogout }) {
 }
 
 // ─── BOTTOM NAV ───────────────────────────────────────────────────────────────
-function BottomNav({ page, setPage, role, isAdmin }) {
+function BottomNav({ page, setPage, role, isAdmi }
   const tabs = isAdmin
     ? [{id:"admin_users",l:"Foydalanuvchilar"},{id:"admin_internships",l:"Amaliyotlar"},{id:"admin_applications",l:"Arizalar"}]
     : role === "company"
