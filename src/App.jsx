@@ -244,87 +244,40 @@ function LandingPage({ onLogin, onRegister }) {
 }
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
-function ResetPasswordScreen({ onDone }) {
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [done, setDone] = useState(false);
-  const [sessionReady, setSessionReady] = useState(false);
-
-  useEffect(() => {
-    // URL dan token olish
-    const hash = window.location.hash;
-    const params = new URLSearchParams(hash.replace("#", "?"));
-    const accessToken = params.get("access_token");
-    const refreshToken = params.get("refresh_token");
-
-    if (accessToken && refreshToken) {
-      supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      }).then(({ error }) => {
-        if (error) {
-          setError("Havola muddati o'tgan. Qayta urinib ko'ring.");
-        } else {
-          setSessionReady(true);
-        }
-      });
-    } else {
-      setError("Havola noto'g'ri. Qayta urinib ko'ring.");
-    }
-  }, []);
-
-  const handleReset = async () => {
-    if (password !== confirm) { setError("Parollar mos kelmadi!"); return; }
-    if (password.length < 6) { setError("Parol kamida 6 belgi bo'lishi kerak!"); return; }
-    setLoading(true); setError("");
-    try {
-      const { error } = await supabase.auth.updateUser({ password });
-      if (error) throw error;
-      setDone(true);
-      setTimeout(() => onDone(), 2500);
-    } catch (err) { setError(err.message); }
-    setLoading(false);
-  };
-
-  return (
-    <div style={{ minHeight:"100vh", background:C.light, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:20 }}>
-      <div style={{ textAlign:"center", marginBottom:24 }}>
-        <div style={{ fontFamily:"Georgia,serif", fontSize:24, fontWeight:700, color:C.primary }}>Natija<span style={{ color:C.accent }}>Hub</span></div>
-        <div style={{ color:C.muted, fontSize:13, marginTop:4 }}>Yangi parol o'rnatish</div>
-      </div>
-      <Card style={{ width:"100%", maxWidth:400, padding:24 }}>
-        {done ? (
-          <div style={{ textAlign:"center", padding:"16px 0" }}>
-            <div style={{ fontSize:40, marginBottom:12 }}>✅</div>
-            <div style={{ fontWeight:700, fontSize:16, color:C.green, marginBottom:8 }}>Parol yangilandi!</div>
-            <div style={{ fontSize:13, color:C.muted }}>Tizimga kirishga yo'naltirilmoqda...</div>
-          </div>
-        ) : (
-          <>
-            <div style={{ fontWeight:700, fontSize:16, color:C.primary, marginBottom:16 }}>Yangi parol kiriting</div>
-            {!sessionReady && !error && (
-              <div style={{ textAlign:"center", padding:"16px 0", color:C.muted, fontSize:13 }}>Yuklanmoqda...</div>
-            )}
-            {sessionReady && (
-              <>
-                <Input label="Yangi parol" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Kamida 6 belgi" />
-                <Input label="Parolni tasdiqlang" type="password" value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Parolni qaytaring" />
-              </>
-            )}
-            {error && <div style={{ background:C.red+"15", color:C.red, padding:"9px 12px", borderRadius:9, fontSize:12, marginBottom:12 }}>{error}</div>}
-            {sessionReady && (
-              <Btn full onClick={handleReset} disabled={loading} color={C.accent}>
-                {loading ? "Saqlanmoqda..." : "Parolni saqlash"}
-              </Btn>
-            )}
-          </>
-        )}
-      </Card>
-    </div>
-  );
-}
+useEffect(() => {
+  const hash = window.location.hash;
+  
+  // access_token ni hash dan olish
+  const match = hash.match(/access_token=([^&]+)/);
+  const refreshMatch = hash.match(/refresh_token=([^&]+)/);
+  
+  if (match && refreshMatch) {
+    const accessToken = match[1];
+    const refreshToken = refreshMatch[1];
+    
+    supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    }).then(({ error }) => {
+      if (error) {
+        setError("Havola muddati o'tgan. Qayta urinib ko'ring.");
+      } else {
+        setSessionReady(true);
+      }
+    });
+  } else if (hash.includes("type=recovery")) {
+    // Session allaqachon bor
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setSessionReady(true);
+      } else {
+        setError("Havola muddati o'tgan. Qayta urinib ko'ring.");
+      }
+    });
+  } else {
+    setError("Havola noto'g'ri. Qayta urinib ko'ring.");
+  }
+}, []);
 function AuthScreen({ onAuth, initialMode="login", onBack }) {
   const [mode, setMode] = useState(initialMode);
   const [role, setRole] = useState("student");
@@ -362,7 +315,7 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
     setLoading(true); setError("");
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `${window.location.origin}/#/reset-password`,
+         redirectTo: `https://natija-hub2.vercel.app/`,
       });
       if (error) throw error;
       setResetSent(true);
