@@ -111,7 +111,6 @@ function LandingPage({ onLogin, onRegister }) {
   return (
     <div style={{ fontFamily:"'DM Sans','Segoe UI',sans-serif", background:"#fff", color:tx, overflowX:"hidden" }}>
       <style>{`.lf:hover{background:#F2F0EC!important}.lc:hover{border-color:${br2}!important}`}</style>
-
       <nav style={{ position:"sticky",top:0,zIndex:100,background:"rgba(255,255,255,0.96)",backdropFilter:"blur(8px)",borderBottom:`1px solid ${br}`,padding:"0 6%",display:"flex",alignItems:"center",justifyContent:"space-between",height:60 }}>
         <div style={{ fontFamily:"Georgia,serif",fontWeight:700,fontSize:20,color:tx }}>Natija<span style={{ color:acc }}>Hub</span></div>
         <div style={{ display:"flex",gap:10 }}>
@@ -119,7 +118,6 @@ function LandingPage({ onLogin, onRegister }) {
           <button onClick={onRegister} style={{ background:tx,color:"#fff",border:"none",padding:"8px 18px",borderRadius:7,fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit" }}>Boshlash</button>
         </div>
       </nav>
-
       <div style={{ padding:"96px 6% 80px",maxWidth:700,margin:"0 auto",textAlign:"center" }}>
         <h1 style={{ fontFamily:"Georgia,serif",fontSize:"clamp(32px,4.5vw,52px)",fontWeight:700,lineHeight:1.15,marginBottom:36,letterSpacing:"-0.5px",color:tx }}>
           NatijaHub talabaning vakansiyagacha bo'lgan <em style={{ fontStyle:"normal",color:acc }}>yo'lini quradi.</em>
@@ -137,9 +135,7 @@ function LandingPage({ onLogin, onRegister }) {
           ))}
         </div>
       </div>
-
       <hr style={{ border:"none",borderTop:`1px solid ${br}`,margin:"0 6%" }} />
-
       <div style={{ padding:"64px 6%",maxWidth:1160,margin:"0 auto" }}>
         <div style={{ fontSize:11,fontWeight:700,color:tx3,letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:12 }}>Muammo</div>
         <h2 style={{ fontFamily:"Georgia,serif",fontSize:"clamp(24px,2.8vw,36px)",fontWeight:700,color:tx,marginBottom:40 }}>Nima uchun talaba ish topa olmaydi?</h2>
@@ -157,9 +153,7 @@ function LandingPage({ onLogin, onRegister }) {
           ))}
         </div>
       </div>
-
       <hr style={{ border:"none",borderTop:`1px solid ${br}`,margin:"0 6%" }} />
-
       <div style={{ padding:"64px 6%",maxWidth:1160,margin:"0 auto" }}>
         <div style={{ fontSize:11,fontWeight:700,color:tx3,letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:12 }}>Xizmatlar</div>
         <h2 style={{ fontFamily:"Georgia,serif",fontSize:"clamp(24px,2.8vw,36px)",fontWeight:700,color:tx,marginBottom:40 }}>NatijaHub nima beradi?</h2>
@@ -182,9 +176,7 @@ function LandingPage({ onLogin, onRegister }) {
           ))}
         </div>
       </div>
-
       <hr style={{ border:"none",borderTop:`1px solid ${br}`,margin:"0 6%" }} />
-
       <div style={{ padding:"64px 6%",maxWidth:1160,margin:"0 auto" }}>
         <div style={{ fontSize:11,fontWeight:700,color:tx3,letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:12 }}>Jarayon</div>
         <h2 style={{ fontFamily:"Georgia,serif",fontSize:"clamp(24px,2.8vw,36px)",fontWeight:700,color:tx,marginBottom:40 }}>Qanday ishlaydi?</h2>
@@ -201,9 +193,7 @@ function LandingPage({ onLogin, onRegister }) {
           ))}
         </div>
       </div>
-
       <hr style={{ border:"none",borderTop:`1px solid ${br}`,margin:"0 6%" }} />
-
       <div style={{ padding:"64px 6%",maxWidth:1160,margin:"0 auto" }}>
         <div style={{ fontSize:11,fontWeight:700,color:tx3,letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:12 }}>Hamkorlar</div>
         <h2 style={{ fontFamily:"Georgia,serif",fontSize:"clamp(24px,2.8vw,36px)",fontWeight:700,color:tx,marginBottom:36 }}>Kimlar bilan ishlaymiz?</h2>
@@ -221,7 +211,6 @@ function LandingPage({ onLogin, onRegister }) {
           ))}
         </div>
       </div>
-
       <div style={{ padding:"64px 6%",maxWidth:1160,margin:"0 auto" }}>
         <div style={{ background:tx,borderRadius:16,padding:"52px 48px",display:"grid",gridTemplateColumns:"1fr auto",gap:40,alignItems:"center" }}>
           <div>
@@ -234,7 +223,6 @@ function LandingPage({ onLogin, onRegister }) {
           </div>
         </div>
       </div>
-
       <footer style={{ borderTop:`1px solid ${br}`,padding:"28px 6%",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12 }}>
         <div style={{ fontFamily:"Georgia,serif",fontWeight:700,fontSize:15,color:tx }}>Natija<span style={{ color:acc }}>Hub</span></div>
         <div style={{ fontSize:12,color:tx3 }}>2026 · O'zbekiston · @natijahubuz</div>
@@ -243,41 +231,84 @@ function LandingPage({ onLogin, onRegister }) {
   );
 }
 
+// ─── RESET PASSWORD ───────────────────────────────────────────────────────────
+function ResetPasswordScreen({ onDone }) {
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    const accessMatch = hash.match(/access_token=([^&]+)/);
+    const refreshMatch = hash.match(/refresh_token=([^&]+)/);
+
+    if (accessMatch && refreshMatch) {
+      supabase.auth.setSession({
+        access_token: decodeURIComponent(accessMatch[1]),
+        refresh_token: decodeURIComponent(refreshMatch[1]),
+      }).then(({ error }) => {
+        if (error) setError("Havola muddati o'tgan. Qayta urinib ko'ring.");
+        else setSessionReady(true);
+      });
+    } else {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) setSessionReady(true);
+        else setError("Havola noto'g'ri. Parolni tiklashni qayta boshlang.");
+      });
+    }
+  }, []);
+
+  const handleReset = async () => {
+    if (password !== confirm) { setError("Parollar mos kelmadi!"); return; }
+    if (password.length < 6) { setError("Parol kamida 6 belgi bo'lishi kerak!"); return; }
+    setLoading(true); setError("");
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw error;
+      setDone(true);
+      setTimeout(() => onDone(), 2500);
+    } catch (err) { setError(err.message); }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ minHeight:"100vh", background:C.light, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:20 }}>
+      <div style={{ textAlign:"center", marginBottom:24 }}>
+        <div style={{ fontFamily:"Georgia,serif", fontSize:24, fontWeight:700, color:C.primary }}>Natija<span style={{ color:C.accent }}>Hub</span></div>
+        <div style={{ color:C.muted, fontSize:13, marginTop:4 }}>Yangi parol o'rnatish</div>
+      </div>
+      <Card style={{ width:"100%", maxWidth:400, padding:24 }}>
+        {done ? (
+          <div style={{ textAlign:"center", padding:"16px 0" }}>
+            <div style={{ fontSize:40, marginBottom:12 }}>✅</div>
+            <div style={{ fontWeight:700, fontSize:16, color:C.green, marginBottom:8 }}>Parol yangilandi!</div>
+            <div style={{ fontSize:13, color:C.muted }}>Tizimga kirishga yo'naltirilmoqda...</div>
+          </div>
+        ) : (
+          <>
+            <div style={{ fontWeight:700, fontSize:16, color:C.primary, marginBottom:16 }}>Yangi parol kiriting</div>
+            {!sessionReady && !error && <div style={{ textAlign:"center", padding:16, color:C.muted, fontSize:13 }}>Yuklanmoqda...</div>}
+            {error && <div style={{ background:C.red+"15", color:C.red, padding:"9px 12px", borderRadius:9, fontSize:12, marginBottom:12 }}>{error}</div>}
+            {sessionReady && (
+              <>
+                <Input label="Yangi parol" type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Kamida 6 belgi" />
+                <Input label="Parolni tasdiqlang" type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} placeholder="Parolni qaytaring" />
+                <Btn full onClick={handleReset} disabled={loading} color={C.accent}>
+                  {loading ? "Saqlanmoqda..." : "Parolni saqlash"}
+                </Btn>
+              </>
+            )}
+          </>
+        )}
+      </Card>
+    </div>
+  );
+}
+
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
-useEffect(() => {
-  const hash = window.location.hash;
-  
-  // access_token ni hash dan olish
-  const match = hash.match(/access_token=([^&]+)/);
-  const refreshMatch = hash.match(/refresh_token=([^&]+)/);
-  
-  if (match && refreshMatch) {
-    const accessToken = match[1];
-    const refreshToken = refreshMatch[1];
-    
-    supabase.auth.setSession({
-      access_token: accessToken,
-      refresh_token: refreshToken,
-    }).then(({ error }) => {
-      if (error) {
-        setError("Havola muddati o'tgan. Qayta urinib ko'ring.");
-      } else {
-        setSessionReady(true);
-      }
-    });
-  } else if (hash.includes("type=recovery")) {
-    // Session allaqachon bor
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setSessionReady(true);
-      } else {
-        setError("Havola muddati o'tgan. Qayta urinib ko'ring.");
-      }
-    });
-  } else {
-    setError("Havola noto'g'ri. Qayta urinib ko'ring.");
-  }
-}, []);
 function AuthScreen({ onAuth, initialMode="login", onBack }) {
   const [mode, setMode] = useState(initialMode);
   const [role, setRole] = useState("student");
@@ -315,7 +346,7 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
     setLoading(true); setError("");
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-         redirectTo: `https://natija-hub2.vercel.app/`,
+        redirectTo: "https://natija-hub2.vercel.app/",
       });
       if (error) throw error;
       setResetSent(true);
@@ -323,7 +354,6 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
     setLoading(false);
   };
 
-  // Parol tiklash sahifasi
   if (showReset) {
     return (
       <div style={{ minHeight:"100vh",background:C.light,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20 }}>
@@ -337,7 +367,7 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
               <div style={{ fontSize:40,marginBottom:12 }}>📧</div>
               <div style={{ fontWeight:700,fontSize:16,color:C.primary,marginBottom:8 }}>Email yuborildi!</div>
               <div style={{ fontSize:13,color:C.muted,lineHeight:1.6,marginBottom:20 }}>
-                <strong>{resetEmail}</strong> manziliga parol tiklash havolasi yuborildi. Emailingizni tekshiring.
+                <strong>{resetEmail}</strong> manziliga parol tiklash havolasi yuborildi.
               </div>
               <Btn full onClick={()=>{ setShowReset(false); setResetSent(false); setResetEmail(""); }} color={C.primary}>
                 Kirishga qaytish
@@ -349,13 +379,7 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
               <div style={{ fontSize:13,color:C.muted,marginBottom:16,lineHeight:1.5 }}>
                 Emailingizni kiriting — parol tiklash havolasini yuboramiz.
               </div>
-              <Input
-                label="Email"
-                type="email"
-                value={resetEmail}
-                onChange={e=>setResetEmail(e.target.value)}
-                placeholder="email@gmail.com"
-              />
+              <Input label="Email" type="email" value={resetEmail} onChange={e=>setResetEmail(e.target.value)} placeholder="email@gmail.com" />
               {error && <div style={{ background:C.red+"15",color:C.red,padding:"9px 12px",borderRadius:9,fontSize:12,marginBottom:12 }}>{error}</div>}
               <Btn full onClick={sendReset} disabled={loading} color={C.accent}>
                 {loading ? "Yuborilmoqda..." : "Havola yuborish"}
@@ -398,14 +422,11 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
         <Input label="Parol" type="password" {...f("password")} placeholder="Kamida 6 belgi" />
         {error && <div style={{ background:C.red+"15",color:C.red,padding:"9px 12px",borderRadius:9,fontSize:12,marginBottom:12 }}>{error}</div>}
         <Btn full onClick={submit} disabled={loading}>{loading?"Kuting...":mode==="login"?"Kirish":"Ro'yxatdan o'tish"}</Btn>
-
-        {/* Parolni unutdim */}
         {mode === "login" && (
           <button onClick={()=>{ setShowReset(true); setResetEmail(form.email); setError(""); }} style={{ width:"100%",background:"transparent",border:"none",color:C.accent,fontSize:12,marginTop:12,cursor:"pointer",fontFamily:"inherit",textDecoration:"underline" }}>
             Parolni unutdim?
           </button>
         )}
-
         {onBack && <button onClick={onBack} style={{ width:"100%",background:"transparent",border:"none",color:C.muted,fontSize:12,marginTop:8,cursor:"pointer",fontFamily:"inherit" }}>← Orqaga</button>}
       </Card>
     </div>
@@ -439,7 +460,6 @@ function BottomNav({ page, setPage, role, isAdmin }) {
     : role === "company"
       ? [{id:"company_home",l:"Panel"},{id:"company_internships",l:"E'lonlar"},{id:"company_applications",l:"Arizalar"}]
       : [{id:"home",l:"Amaliyotlar"},{id:"my_applications",l:"Arizalarim"},{id:"profile",l:"Profil"},{id:"resume",l:"CV"}];
-
   return (
     <div style={{ position:"fixed",bottom:0,left:0,right:0,background:"#fff",borderTop:`1px solid ${C.border}`,display:"flex",zIndex:200,paddingBottom:10 }}>
       {tabs.map(t=>(
@@ -495,7 +515,6 @@ function StudentHome({ userId }) {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("Barchasi");
   const [search, setSearch] = useState("");
-
   useEffect(()=>{
     (async()=>{
       setLoading(true);
@@ -504,11 +523,9 @@ function StudentHome({ userId }) {
       setLoading(false);
     })();
   },[]);
-
   const filtered = items
     .filter(i=>filter==="Barchasi"||i.type===filter)
     .filter(i=>!search||i.role?.toLowerCase().includes(search.toLowerCase())||i.company_name?.toLowerCase().includes(search.toLowerCase()));
-
   return (
     <div style={{ padding:"16px 0" }}>
       <SectionHeader title="Amaliyotlar" sub={`${items.length} ta e'lon`} />
@@ -527,7 +544,6 @@ function StudentHome({ userId }) {
 function StudentApplications({ userId }) {
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(()=>{
     if(!userId){setLoading(false);return;}
     (async()=>{
@@ -537,7 +553,6 @@ function StudentApplications({ userId }) {
       setLoading(false);
     })();
   },[userId]);
-
   return (
     <div style={{ padding:"16px 0" }}>
       <SectionHeader title="Arizalarim" sub={`${apps.length} ta ariza`} />
@@ -572,7 +587,6 @@ function StudentProfile({ profile, onUpdate }) {
   const [newSkill, setNewSkill] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-
   const save = async () => {
     setSaving(true);
     try {
@@ -581,7 +595,6 @@ function StudentProfile({ profile, onUpdate }) {
     } catch{}
     setSaving(false);
   };
-
   return (
     <div style={{ padding:"16px 0" }}>
       <Card style={{ marginBottom:12,textAlign:"center",padding:24 }}>
@@ -594,7 +607,6 @@ function StudentProfile({ profile, onUpdate }) {
         {profile?.phone&&<div style={{ color:C.muted,fontSize:12,marginTop:3 }}>{profile.phone}</div>}
         {profile?.about&&<div style={{ color:C.muted,fontSize:13,lineHeight:1.5,marginTop:8,padding:"0 8px" }}>{profile.about}</div>}
       </Card>
-
       <Card style={{ marginBottom:12 }}>
         <h4 style={{ margin:"0 0 12px",fontWeight:700,fontSize:14,color:C.primary }}>Ko'nikmalar</h4>
         <div style={{ display:"flex",flexWrap:"wrap",gap:6,marginBottom:10 }}>
@@ -609,7 +621,6 @@ function StudentProfile({ profile, onUpdate }) {
           <Btn small onClick={()=>{if(newSkill.trim()){setSkills([...skills,newSkill.trim()]);setNewSkill("");}}}>+</Btn>
         </div>
       </Card>
-
       <Btn full onClick={()=>setEditing(!editing)} color={editing?C.muted:C.primary} style={{ marginBottom:10 }}>{editing?"Bekor":"Profilni tahrirlash"}</Btn>
       {saved&&<div style={{ background:C.green+"15",color:C.green,padding:"10px 14px",borderRadius:10,fontSize:13,marginBottom:10,textAlign:"center",fontWeight:600 }}>Saqlandi!</div>}
       {editing&&(
@@ -632,7 +643,6 @@ function StudentCV({ profile }) {
   const [exps, setExps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("preview");
-
   useEffect(()=>{
     if(!profile?.id){setLoading(false);return;}
     (async()=>{
@@ -642,10 +652,8 @@ function StudentCV({ profile }) {
       setLoading(false);
     })();
   },[profile]);
-
   const allSkills=[...(new Set([...(profile?.skills||[]),...exps.flatMap(e=>e.skills||[])]))];
   const score=Math.min(100,(profile?.full_name?15:0)+(profile?.about?15:0)+(profile?.phone?10:0)+(profile?.university?10:0)+(allSkills.length>0?10:0)+exps.length*20);
-
   return (
     <div style={{ padding:"16px 0" }}>
       <Card style={{ marginBottom:14 }}>
@@ -660,15 +668,12 @@ function StudentCV({ profile }) {
           <div style={{ width:`${score}%`,height:"100%",background:score>=70?C.green:C.gold,borderRadius:6,transition:"width 0.5s" }} />
         </div>
       </Card>
-
       <div style={{ display:"flex",background:"#fff",borderRadius:10,padding:3,marginBottom:14,border:`1px solid ${C.border}` }}>
         {[["preview","Ko'rinish"],["experience","Tajriba"],["recs","Tavsiyalar"]].map(([id,l])=>(
           <button key={id} onClick={()=>setTab(id)} style={{ flex:1,background:tab===id?C.primary:"transparent",color:tab===id?"#fff":C.muted,border:"none",borderRadius:8,padding:"8px 4px",cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"inherit" }}>{l}</button>
         ))}
       </div>
-
       {loading&&<Spinner />}
-
       {!loading&&tab==="preview"&&(
         <Card>
           <div style={{ background:C.primary,margin:"-16px -16px 14px",padding:16,borderRadius:"14px 14px 0 0",display:"flex",gap:12,alignItems:"center" }}>
@@ -738,7 +743,6 @@ function StudentCV({ profile }) {
 function CompanyHome({ profile }) {
   const [stats, setStats] = useState({ internships:0, applications:0, accepted:0 });
   const [loading, setLoading] = useState(true);
-
   useEffect(()=>{
     if(!profile?.id){setLoading(false);return;}
     (async()=>{
@@ -753,7 +757,6 @@ function CompanyHome({ profile }) {
       setLoading(false);
     })();
   },[profile]);
-
   return (
     <div style={{ padding:"16px 0" }}>
       <Card style={{ background:"linear-gradient(135deg,#C45C2E,#F59E0B)",border:"none",marginBottom:16,padding:22 }}>
@@ -790,7 +793,6 @@ function CompanyInternships({ profile }) {
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ role:"", description:"", skills:"", duration:"", type:"Ofis" });
   const [posting, setPosting] = useState(false);
-
   const load = async () => {
     if(!profile?.id){setLoading(false);return;}
     setLoading(true);
@@ -798,9 +800,7 @@ function CompanyInternships({ profile }) {
     catch{}
     setLoading(false);
   };
-
   useEffect(()=>{load();},[profile]);
-
   const post = async () => {
     if(!form.role||!profile?.id)return;
     setPosting(true);
@@ -811,10 +811,8 @@ function CompanyInternships({ profile }) {
     }catch{}
     setPosting(false);
   };
-
   const toggle = async (id, cur) => { await supabase.from("internships").update({is_active:!cur}).eq("id",id); await load(); };
   const f = k => ({ value:form[k], onChange:e=>setForm({...form,[k]:e.target.value}) });
-
   return (
     <div style={{ padding:"16px 0" }}>
       <SectionHeader title="E'lonlarim" sub={`${items.length} ta amaliyot`} />
@@ -863,7 +861,6 @@ function CompanyApplications({ profile }) {
   const [updating, setUpdating] = useState(null);
   const [selected, setSelected] = useState(null);
   const [filterStatus, setFilterStatus] = useState("all");
-
   const load = async () => {
     if(!profile?.id){setLoading(false);return;}
     setLoading(true);
@@ -877,18 +874,14 @@ function CompanyApplications({ profile }) {
     }catch{}
     setLoading(false);
   };
-
   useEffect(()=>{load();},[profile]);
-
   const updateStatus = async (id, status) => {
     setUpdating(id);
     try { await supabase.from("applications").update({status}).eq("id",id); setApplications(prev=>prev.map(a=>a.id===id?{...a,status}:a)); if(selected?.id===id)setSelected(prev=>({...prev,status})); }
     catch{}
     setUpdating(null);
   };
-
   const filtered = applications.filter(a=>filterStatus==="all"||(a.status||"pending")===filterStatus);
-
   if (selected) {
     const p = selected.profiles;
     return (
@@ -923,7 +916,6 @@ function CompanyApplications({ profile }) {
       </div>
     );
   }
-
   return (
     <div style={{ padding:"16px 0" }}>
       <SectionHeader title="Arizalar" sub={`${applications.length} ta ariza`} />
@@ -961,7 +953,6 @@ function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-
   useEffect(()=>{
     (async()=>{
       setLoading(true);
@@ -970,11 +961,9 @@ function AdminUsers() {
       setLoading(false);
     })();
   },[]);
-
   const filtered=users.filter(u=>!search||u.full_name?.toLowerCase().includes(search.toLowerCase())||u.email?.toLowerCase().includes(search.toLowerCase())||u.university?.toLowerCase().includes(search.toLowerCase()));
   const students=users.filter(u=>u.role!=="company");
   const companies=users.filter(u=>u.role==="company");
-
   return (
     <div style={{ padding:"16px 0" }}>
       <SectionHeader title="Foydalanuvchilar" sub={`${students.length} talaba · ${companies.length} tadbirkor`} />
@@ -1009,7 +998,6 @@ function AdminUsers() {
 function AdminInternships() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(()=>{
     (async()=>{
       setLoading(true);
@@ -1018,10 +1006,8 @@ function AdminInternships() {
       setLoading(false);
     })();
   },[]);
-
   const toggle=async(id,cur)=>{ await supabase.from("internships").update({is_active:!cur}).eq("id",id); setItems(prev=>prev.map(i=>i.id===id?{...i,is_active:!cur}:i)); };
   const remove=async(id)=>{ if(!window.confirm("O'chirishni tasdiqlaysizmi?"))return; await supabase.from("internships").delete().eq("id",id); setItems(prev=>prev.filter(i=>i.id!==id)); };
-
   return (
     <div style={{ padding:"16px 0" }}>
       <SectionHeader title="Barcha amaliyotlar" sub={`${items.length} ta e'lon`} />
@@ -1049,7 +1035,6 @@ function AdminApplications() {
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
-
   useEffect(()=>{
     (async()=>{
       setLoading(true);
@@ -1058,12 +1043,10 @@ function AdminApplications() {
       setLoading(false);
     })();
   },[]);
-
   const updateStatus=async(id,status)=>{ await supabase.from("applications").update({status}).eq("id",id); setApps(prev=>prev.map(a=>a.id===id?{...a,status}:a)); };
   const filtered=apps.filter(a=>filterStatus==="all"||(a.status||"pending")===filterStatus);
   const pending=apps.filter(a=>!a.status||a.status==="pending").length;
   const accepted=apps.filter(a=>a.status==="accepted").length;
-
   return (
     <div style={{ padding:"16px 0" }}>
       <SectionHeader title="Barcha arizalar" sub={`${apps.length} ta ariza`} />
@@ -1113,22 +1096,22 @@ export default function App() {
   const [authMode, setAuthMode] = useState("login");
 
   useEffect(()=>{
-    // Hash tekshirish
     const hash = window.location.hash;
-    if (hash.includes("reset-password") || hash.includes("type=recovery")) {
+    if (hash.includes("type=recovery") || hash.includes("access_token")) {
       setIsResetPassword(true);
+      setAuthLoading(false);
+      return;
     }
 
-    // Session tekshirish
     supabase.auth.getSession().then(({data:{session}})=>{
       if(session?.user){setUser(session.user);loadProfile(session.user.id);}
       setAuthLoading(false);
     });
 
-    // Auth o'zgarishlarini kuzatish
     const{data:{subscription}}=supabase.auth.onAuthStateChange((_e,session)=>{
       if(_e === "PASSWORD_RECOVERY"){
         setIsResetPassword(true);
+        return;
       }
       if(session?.user){setUser(session.user);loadProfile(session.user.id);setShowAuth(false);}
       else{setUser(null);setProfile(null);}
