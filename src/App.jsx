@@ -1,12 +1,12 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { supabase } from "./supabaseClient";
 
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
 const C = {
   primary: "#0F172A", accent: "#2D5BE3", gold: "#F59E0B",
   green: "#10B981", red: "#EF4444", muted: "#6B7280",
   light: "#F8FAFC", border: "#E2E8F0", card: "#FFFFFF",
 };
-
 const ADMIN_EMAIL = "shahriyorsobirovpm2026@gmail.com";
 const AuthContext = createContext(null);
 
@@ -16,7 +16,7 @@ const MOCK_INTERNSHIPS = [
   { id:3, company_name:"TechUz Startup", company_logo:"💻", role:"Business Analyst Intern", skills:["Excel","Analytics","Reporting"], duration:"2 oy", type:"Remote", description:"Biznes jarayonlarni tahlil qilish.", is_active:true },
 ];
 
-// ─── UI ───────────────────────────────────────────────────────────────────────
+// ─── UI COMPONENTS ────────────────────────────────────────────────────────────
 function Badge({ text, color=C.accent }) {
   return <span style={{ background:color+"18", color, padding:"3px 10px", borderRadius:20, fontSize:11, fontWeight:600 }}>{text}</span>;
 }
@@ -24,13 +24,13 @@ function Badge({ text, color=C.accent }) {
 function Btn({ children, onClick, color=C.primary, textColor="#fff", full, small, disabled, outline, style={} }) {
   return (
     <button onClick={onClick} disabled={disabled} style={{
-      background:outline?"transparent":disabled?"#CBD5E1":color,
-      color:outline?color:disabled?"#94A3B8":textColor,
-      border:outline?`1.5px solid ${color}`:"none",
-      borderRadius:10, padding:small?"6px 12px":"11px 20px",
-      fontSize:small?12:13, fontWeight:600,
-      cursor:disabled?"not-allowed":"pointer",
-      width:full?"100%":"auto", transition:"all 0.15s",
+      background: outline?"transparent": disabled?"#CBD5E1": color,
+      color: outline?color: disabled?"#94A3B8": textColor,
+      border: outline?`1.5px solid ${color}`:"none",
+      borderRadius:10, padding: small?"6px 12px":"11px 20px",
+      fontSize: small?12:13, fontWeight:600,
+      cursor: disabled?"not-allowed":"pointer",
+      width: full?"100%":"auto", transition:"all 0.15s",
       fontFamily:"inherit", ...style,
     }}>{children}</button>
   );
@@ -76,7 +76,17 @@ function SectionHeader({ title, sub }) {
   );
 }
 
-// ─── LANDING ──────────────────────────────────────────────────────────────────
+function Empty({ icon, title, sub }) {
+  return (
+    <div style={{ textAlign:"center", padding:"32px 16px", color:C.muted, border:`1px dashed ${C.border}`, borderRadius:12 }}>
+      {icon && <div style={{ fontSize:32, marginBottom:8 }}>{icon}</div>}
+      <div style={{ fontWeight:600, fontSize:14, marginBottom:4 }}>{title}</div>
+      {sub && <div style={{ fontSize:12 }}>{sub}</div>}
+    </div>
+  );
+}
+
+// ─── LANDING PAGE ─────────────────────────────────────────────────────────────
 function LandingPage({ onLogin, onRegister }) {
   const acc="#2D5BE3", accL="#EEF2FD", accT="#1A3FB5";
   const grn="#1A7A4A", grnL="#EBF5F0";
@@ -92,14 +102,12 @@ function LandingPage({ onLogin, onRegister }) {
     {n:"05",t:"Tadbirkor uchun filtr",d:"Mos kandidatlarni filtrlab yetkazamiz.",from:"Platforma",fC:accL,fT:accT,to:"Tadbirkor oladi",tC:ambL,tT:amb},
     {n:"06",t:"Biznes marketplace",d:"Mahsulotingizni talabalar auditoriyasiga taqdim eting.",tag:"Tez kunda"},
   ];
-
   const problems = [
     {n:"01",t:"Nazariya amaliyotga aylanmaydi",d:"4 yil o'qiydi, biror tashkilotda ishlamaydi."},
     {n:"02",t:"Mavjud platformalar mos emas",d:"LinkedIn, HeadHunter, OLX — tajriba talab qiladi."},
     {n:"03",t:"Portfolio va CV bo'sh",d:"Vakansiyaga murojaat qilganda ko'rsatadigan narsa yo'q."},
     {n:"04",t:"Tadbirkor ham qiynaladi",d:"Yosh kadr topish uchun HR xarajati va vaqt ketadi."},
   ];
-
   const steps = [
     {n:"01",t:"Ro'yxatdan o'tish",d:"Ko'nikmalar va sohani kiriting",a:"Talaba",aC:accL,aT:accT},
     {n:"02",t:"Mos amaliyot topish",d:"Platforma mos internshiplarni taklif etadi",a:"Platforma",aC:accL,aT:accT},
@@ -139,7 +147,6 @@ function LandingPage({ onLogin, onRegister }) {
       </div>
 
       <hr style={{ border:"none",borderTop:`1px solid ${br}`,margin:"0 6%" }} />
-
       <div style={{ padding:"64px 6%",maxWidth:1160,margin:"0 auto" }}>
         <div style={{ fontSize:11,fontWeight:700,color:tx3,letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:12 }}>Muammo</div>
         <h2 style={{ fontFamily:"Georgia,serif",fontSize:"clamp(24px,2.8vw,36px)",fontWeight:700,color:tx,marginBottom:40 }}>Nima uchun talaba ish topa olmaydi?</h2>
@@ -159,7 +166,6 @@ function LandingPage({ onLogin, onRegister }) {
       </div>
 
       <hr style={{ border:"none",borderTop:`1px solid ${br}`,margin:"0 6%" }} />
-
       <div style={{ padding:"64px 6%",maxWidth:1160,margin:"0 auto" }}>
         <div style={{ fontSize:11,fontWeight:700,color:tx3,letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:12 }}>Xizmatlar</div>
         <h2 style={{ fontFamily:"Georgia,serif",fontSize:"clamp(24px,2.8vw,36px)",fontWeight:700,color:tx,marginBottom:40 }}>NatijaHub nima beradi?</h2>
@@ -184,7 +190,6 @@ function LandingPage({ onLogin, onRegister }) {
       </div>
 
       <hr style={{ border:"none",borderTop:`1px solid ${br}`,margin:"0 6%" }} />
-
       <div style={{ padding:"64px 6%",maxWidth:1160,margin:"0 auto" }}>
         <div style={{ fontSize:11,fontWeight:700,color:tx3,letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:12 }}>Jarayon</div>
         <h2 style={{ fontFamily:"Georgia,serif",fontSize:"clamp(24px,2.8vw,36px)",fontWeight:700,color:tx,marginBottom:40 }}>Qanday ishlaydi?</h2>
@@ -203,7 +208,6 @@ function LandingPage({ onLogin, onRegister }) {
       </div>
 
       <hr style={{ border:"none",borderTop:`1px solid ${br}`,margin:"0 6%" }} />
-
       <div style={{ padding:"64px 6%",maxWidth:1160,margin:"0 auto" }}>
         <div style={{ fontSize:11,fontWeight:700,color:tx3,letterSpacing:"1.5px",textTransform:"uppercase",marginBottom:12 }}>Hamkorlar</div>
         <h2 style={{ fontFamily:"Georgia,serif",fontSize:"clamp(24px,2.8vw,36px)",fontWeight:700,color:tx,marginBottom:36 }}>Kimlar bilan ishlaymiz?</h2>
@@ -243,7 +247,83 @@ function LandingPage({ onLogin, onRegister }) {
   );
 }
 
-// ─── AUTH ─────────────────────────────────────────────────────────────────────
+// ─── RESET PASSWORD ───────────────────────────────────────────────────────────
+function ResetPasswordScreen({ onDone }) {
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    const accessMatch = hash.match(/access_token=([^&]+)/);
+    const refreshMatch = hash.match(/refresh_token=([^&]+)/);
+    if (accessMatch && refreshMatch) {
+      supabase.auth.setSession({
+        access_token: decodeURIComponent(accessMatch[1]),
+        refresh_token: decodeURIComponent(refreshMatch[1]),
+      }).then(({ error }) => {
+        if (error) setError("Havola muddati o'tgan. Qayta urinib ko'ring.");
+        else setSessionReady(true);
+      });
+    } else {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) setSessionReady(true);
+        else setError("Havola noto'g'ri. Parolni tiklashni qayta boshlang.");
+      });
+    }
+  }, []);
+
+  const handleReset = async () => {
+    if (password !== confirm) { setError("Parollar mos kelmadi!"); return; }
+    if (password.length < 6) { setError("Parol kamida 6 belgi bo'lishi kerak!"); return; }
+    setLoading(true); setError("");
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw error;
+      setDone(true);
+      setTimeout(() => onDone(), 2500);
+    } catch (err) { setError(err.message); }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ minHeight:"100vh",background:C.light,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20 }}>
+      <div style={{ textAlign:"center",marginBottom:24 }}>
+        <div style={{ fontFamily:"Georgia,serif",fontSize:24,fontWeight:700,color:C.primary }}>Natija<span style={{ color:C.accent }}>Hub</span></div>
+        <div style={{ color:C.muted,fontSize:13,marginTop:4 }}>Yangi parol o'rnatish</div>
+      </div>
+      <Card style={{ width:"100%",maxWidth:400,padding:24 }}>
+        {done ? (
+          <div style={{ textAlign:"center",padding:"16px 0" }}>
+            <div style={{ fontSize:40,marginBottom:12 }}>✅</div>
+            <div style={{ fontWeight:700,fontSize:16,color:C.green,marginBottom:8 }}>Parol yangilandi!</div>
+            <div style={{ fontSize:13,color:C.muted }}>Tizimga kirishga yo'naltirilmoqda...</div>
+          </div>
+        ) : (
+          <>
+            <div style={{ fontWeight:700,fontSize:16,color:C.primary,marginBottom:16 }}>Yangi parol kiriting</div>
+            {!sessionReady && !error && <div style={{ textAlign:"center",padding:16,color:C.muted,fontSize:13 }}>Yuklanmoqda...</div>}
+            {error && <div style={{ background:C.red+"15",color:C.red,padding:"9px 12px",borderRadius:9,fontSize:12,marginBottom:12 }}>{error}</div>}
+            {sessionReady && (
+              <>
+                <Input label="Yangi parol" type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Kamida 6 belgi" />
+                <Input label="Parolni tasdiqlang" type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} placeholder="Parolni qaytaring" />
+                <Btn full onClick={handleReset} disabled={loading} color={C.accent}>
+                  {loading?"Saqlanmoqda...":"Parolni saqlash"}
+                </Btn>
+              </>
+            )}
+          </>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+// ─── AUTH SCREEN ──────────────────────────────────────────────────────────────
 function AuthScreen({ onAuth, initialMode="login", onBack }) {
   const [mode, setMode] = useState(initialMode);
   const [role, setRole] = useState("student");
@@ -257,23 +337,26 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
   const f = k => ({ value:form[k], onChange:e=>setForm({...form,[k]:e.target.value}) });
 
   const submit = async () => {
-    setLoading(true); setError(""); setSuccess("");
+    setLoading(true); setError("");
     try {
       if (mode === "login") {
         const { data, error } = await supabase.auth.signInWithPassword({ email:form.email, password:form.password });
         if (error) throw error;
         onAuth(data.user);
       } else {
-        // 1. Auth user yaratish
+        if (!form.full_name.trim()) throw new Error("Ism Familiyani kiriting");
+        if (role === "company" && !form.company_name.trim()) throw new Error("Kompaniya nomini kiriting");
+        if (role === "student" && !form.university.trim()) throw new Error("Universitetni kiriting");
+
         const { data, error } = await supabase.auth.signUp({
-          email:form.email, password:form.password,
-          options:{ data:{ full_name:form.full_name, role, university:form.university, company_name:form.company_name } }
+          email: form.email, password: form.password,
+          options: { data: { full_name:form.full_name, role, university:form.university, company_name:form.company_name } }
         });
         if (error) throw error;
 
-        // 2. profiles table ga yozish
         if (data.user) {
-          const { error: profileError } = await supabase.from("profiles").insert({
+          // profiles table ga yozish — RLS policy bo'lishi kerak
+          const { error: pErr } = await supabase.from("profiles").insert({
             id: data.user.id,
             email: form.email,
             full_name: form.full_name,
@@ -281,9 +364,9 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
             university: role === "student" ? form.university : null,
             company_name: role === "company" ? form.company_name : null,
           });
-          // profileError bo'lsa ham davom etamiz — trigger orqali allaqachon yaratilgan bo'lishi mumkin
-          if (profileError && profileError.code !== "23505") {
-            console.warn("Profile insert warning:", profileError.message);
+          // 23505 = duplicate (trigger orqali allaqachon yaratilgan) — xato emas
+          if (pErr && pErr.code !== "23505") {
+            console.warn("Profile insert:", pErr.message);
           }
           onAuth(data.user);
         }
@@ -293,11 +376,10 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
   };
 
   const sendReset = async () => {
-    if (!resetEmail) { setError("Emailni kiriting"); return; }
+    if (!resetEmail.trim()) { setError("Emailni kiriting"); return; }
     setLoading(true); setError("");
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        // Fix 2: to'g'ri redirectTo — ResetPasswordScreen ochilishi uchun
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.trim(), {
         redirectTo: `${window.location.origin}/#type=recovery`,
       });
       if (error) throw error;
@@ -306,7 +388,7 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
     setLoading(false);
   };
 
-  // Parol tiklash sahifasi
+  // Parol tiklash ekrani
   if (showReset) {
     return (
       <div style={{ minHeight:"100vh",background:C.light,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20 }}>
@@ -332,16 +414,10 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
               <div style={{ fontSize:13,color:C.muted,marginBottom:16,lineHeight:1.5 }}>
                 Emailingizni kiriting — parol tiklash havolasini yuboramiz.
               </div>
-              <Input
-                label="Email"
-                type="email"
-                value={resetEmail}
-                onChange={e=>setResetEmail(e.target.value)}
-                placeholder="email@gmail.com"
-              />
+              <Input label="Email" type="email" value={resetEmail} onChange={e=>setResetEmail(e.target.value)} placeholder="email@gmail.com" />
               {error && <div style={{ background:C.red+"15",color:C.red,padding:"9px 12px",borderRadius:9,fontSize:12,marginBottom:12 }}>{error}</div>}
               <Btn full onClick={sendReset} disabled={loading} color={C.accent}>
-                {loading ? "Yuborilmoqda..." : "Havola yuborish"}
+                {loading?"Yuborilmoqda...":"Havola yuborish"}
               </Btn>
               <button onClick={()=>{ setShowReset(false); setError(""); }} style={{ width:"100%",background:"transparent",border:"none",color:C.muted,fontSize:12,marginTop:12,cursor:"pointer",fontFamily:"inherit" }}>
                 ← Orqaga
@@ -365,30 +441,29 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
             <button key={m} onClick={()=>{ setMode(m); setError(""); }} style={{ flex:1,background:mode===m?C.primary:"transparent",color:mode===m?"#fff":C.muted,border:"none",borderRadius:8,padding:"8px 0",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit" }}>{l}</button>
           ))}
         </div>
-        {mode === "register" && (
+        {mode==="register" && (
           <>
             <div style={{ display:"flex",gap:8,marginBottom:14 }}>
               {[["student","Talaba"],["company","Tadbirkor"]].map(([r,l])=>(
                 <button key={r} onClick={()=>setRole(r)} style={{ flex:1,background:role===r?C.primary:"transparent",color:role===r?"#fff":C.muted,border:`1.5px solid ${role===r?C.primary:C.border}`,borderRadius:9,padding:"9px 0",cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit" }}>{l}</button>
               ))}
             </div>
-            <Input label="Ism Familiya" {...f("full_name")} placeholder="Ism Familiya" />
-            {role==="student" && <Input label="Universitet" {...f("university")} placeholder="TDIU, WIUT..." />}
-            {role==="company" && <Input label="Kompaniya nomi" {...f("company_name")} placeholder="Kompaniya nomi" />}
+            <Input label="Ism Familiya *" {...f("full_name")} placeholder="Ism Familiya" />
+            {role==="student" && <Input label="Universitet *" {...f("university")} placeholder="TDIU, WIUT, Millat Umidi..." />}
+            {role==="company" && <Input label="Kompaniya nomi *" {...f("company_name")} placeholder="Kompaniya nomi" />}
           </>
         )}
-        <Input label="Email" type="email" {...f("email")} placeholder="email@gmail.com" />
-        <Input label="Parol" type="password" {...f("password")} placeholder="Kamida 6 belgi" />
+        <Input label="Email *" type="email" {...f("email")} placeholder="email@gmail.com" />
+        <Input label="Parol *" type="password" {...f("password")} placeholder="Kamida 6 belgi" />
         {error && <div style={{ background:C.red+"15",color:C.red,padding:"9px 12px",borderRadius:9,fontSize:12,marginBottom:12 }}>{error}</div>}
-        <Btn full onClick={submit} disabled={loading}>{loading?"Kuting...":mode==="login"?"Kirish":"Ro'yxatdan o'tish"}</Btn>
-
-        {/* Parolni unutdim */}
-        {mode === "login" && (
+        <Btn full onClick={submit} disabled={loading}>
+          {loading?"Kuting...":mode==="login"?"Kirish":"Ro'yxatdan o'tish"}
+        </Btn>
+        {mode==="login" && (
           <button onClick={()=>{ setShowReset(true); setResetEmail(form.email); setError(""); }} style={{ width:"100%",background:"transparent",border:"none",color:C.accent,fontSize:12,marginTop:12,cursor:"pointer",fontFamily:"inherit",textDecoration:"underline" }}>
             Parolni unutdim?
           </button>
         )}
-
         {onBack && <button onClick={onBack} style={{ width:"100%",background:"transparent",border:"none",color:C.muted,fontSize:12,marginTop:8,cursor:"pointer",fontFamily:"inherit" }}>← Orqaga</button>}
       </Card>
     </div>
@@ -397,7 +472,7 @@ function AuthScreen({ onAuth, initialMode="login", onBack }) {
 
 // ─── NAVBAR ───────────────────────────────────────────────────────────────────
 function Navbar({ profile, onLogout }) {
-  const isAdmin = profile?.email === ADMIN_EMAIL;
+  const isAdmin = profile?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
   return (
     <nav style={{ background:C.primary,padding:"0 16px",display:"flex",alignItems:"center",justifyContent:"space-between",height:54,position:"sticky",top:0,zIndex:200 }}>
       <div style={{ fontFamily:"Georgia,serif",fontWeight:700,fontSize:17,color:"#fff" }}>
@@ -419,10 +494,9 @@ function Navbar({ profile, onLogout }) {
 function BottomNav({ page, setPage, role, isAdmin }) {
   const tabs = isAdmin
     ? [{id:"admin_users",l:"Foydalanuvchilar"},{id:"admin_internships",l:"Amaliyotlar"},{id:"admin_applications",l:"Arizalar"}]
-    : role === "company"
+    : role==="company"
       ? [{id:"company_home",l:"Panel"},{id:"company_internships",l:"E'lonlar"},{id:"company_applications",l:"Arizalar"}]
       : [{id:"home",l:"Amaliyotlar"},{id:"my_applications",l:"Arizalarim"},{id:"profile",l:"Profil"},{id:"resume",l:"CV"}];
-
   return (
     <div style={{ position:"fixed",bottom:0,left:0,right:0,background:"#fff",borderTop:`1px solid ${C.border}`,display:"flex",zIndex:200,paddingBottom:10 }}>
       {tabs.map(t=>(
@@ -439,24 +513,22 @@ function BottomNav({ page, setPage, role, isAdmin }) {
 function InternshipCard({ item, userId }) {
   const [applied, setApplied] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const apply = async () => {
     if (!userId) { alert("Ariza berish uchun avval tizimga kiring!"); return; }
     setLoading(true);
     try {
       const { error } = await supabase.from("applications").insert({ internship_id:item.id, student_id:userId, status:"pending" });
       if (error) {
-        // 23505 = duplicate — talaba allaqachon ariza bergan
-        if (error.code === "23505") {
-          setApplied(true);
-        } else {
-          alert("Xato yuz berdi: " + error.message);
-        }
+        if (error.code === "23505") setApplied(true); // allaqachon berilgan
+        else alert("Xato: " + error.message);
       } else {
         setApplied(true);
       }
     } catch { alert("Ulanishda xato. Internet aloqasini tekshiring."); }
     setLoading(false);
   };
+
   return (
     <Card style={{ marginBottom:10 }}>
       <div style={{ display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10 }}>
@@ -483,7 +555,7 @@ function InternshipCard({ item, userId }) {
   );
 }
 
-// ─── STUDENT: AMALIYOTLAR ────────────────────────────────────────────────────
+// ─── STUDENT: AMALIYOTLAR ─────────────────────────────────────────────────────
 function StudentHome({ userId }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -493,8 +565,10 @@ function StudentHome({ userId }) {
   useEffect(()=>{
     (async()=>{
       setLoading(true);
-      try { const{data}=await supabase.from("internships").select("*").eq("is_active",true).order("created_at",{ascending:false}); setItems(data?.length?data:MOCK_INTERNSHIPS); }
-      catch { setItems(MOCK_INTERNSHIPS); }
+      try {
+        const { data } = await supabase.from("internships").select("*").eq("is_active",true).order("created_at",{ascending:false});
+        setItems(data?.length ? data : MOCK_INTERNSHIPS);
+      } catch { setItems(MOCK_INTERNSHIPS); }
       setLoading(false);
     })();
   },[]);
@@ -505,19 +579,22 @@ function StudentHome({ userId }) {
 
   return (
     <div style={{ padding:"16px 0" }}>
-      <SectionHeader title="Amaliyotlar" sub={`${items.length} ta e'lon`} />
+      <SectionHeader title="Amaliyotlar" sub={`${items.length} ta e'lon mavjud`} />
       <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Qidirish..." style={{ width:"100%",border:`1px solid ${C.border}`,borderRadius:10,padding:"10px 14px",fontSize:13,outline:"none",boxSizing:"border-box",fontFamily:"inherit",marginBottom:12,background:"#fff" }} />
       <div style={{ display:"flex",gap:6,marginBottom:14,flexWrap:"wrap" }}>
         {["Barchasi","Ofis","Remote","Gibrid"].map(f=>(
           <button key={f} onClick={()=>setFilter(f)} style={{ background:filter===f?C.primary:"#fff",color:filter===f?"#fff":C.muted,border:`1px solid ${filter===f?C.primary:C.border}`,padding:"5px 14px",borderRadius:18,cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"inherit" }}>{f}</button>
         ))}
       </div>
-      {loading?<Spinner/>:filtered.length===0?<div style={{ textAlign:"center",padding:32,color:C.muted,fontSize:13 }}>Hech narsa topilmadi</div>:filtered.map(item=><InternshipCard key={item.id} item={item} userId={userId} />)}
+      {loading ? <Spinner /> : filtered.length===0
+        ? <Empty title="Hech narsa topilmadi" sub="Boshqa filtr tanlang" />
+        : filtered.map(item=><InternshipCard key={item.id} item={item} userId={userId} />)
+      }
     </div>
   );
 }
 
-// ─── STUDENT: ARIZALARIM ─────────────────────────────────────────────────────
+// ─── STUDENT: ARIZALARIM ──────────────────────────────────────────────────────
 function StudentApplications({ userId }) {
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -526,8 +603,10 @@ function StudentApplications({ userId }) {
     if(!userId){setLoading(false);return;}
     (async()=>{
       setLoading(true);
-      try { const{data}=await supabase.from("applications").select("*, internships(role,company_name,company_logo,duration,type)").eq("student_id",userId).order("created_at",{ascending:false}); setApps(data||[]); }
-      catch{}
+      try {
+        const { data } = await supabase.from("applications").select("*, internships(role,company_name,company_logo,duration,type)").eq("student_id",userId).order("created_at",{ascending:false});
+        setApps(data||[]);
+      } catch {}
       setLoading(false);
     })();
   },[userId]);
@@ -535,9 +614,9 @@ function StudentApplications({ userId }) {
   return (
     <div style={{ padding:"16px 0" }}>
       <SectionHeader title="Arizalarim" sub={`${apps.length} ta ariza`} />
-      {loading?<Spinner/>:apps.length===0
-        ?<div style={{ textAlign:"center",padding:32,color:C.muted }}><div style={{ fontWeight:600,marginBottom:6 }}>Hali ariza yo'q</div><div style={{ fontSize:12 }}>Amaliyotlar bo'limidan ariza bering</div></div>
-        :apps.map(app=>(
+      {loading ? <Spinner /> : apps.length===0
+        ? <Empty title="Hali ariza yo'q" sub="Amaliyotlar bo'limidan ariza bering" />
+        : apps.map(app=>(
           <Card key={app.id} style={{ marginBottom:10 }}>
             <div style={{ display:"flex",alignItems:"center",gap:10,marginBottom:10 }}>
               <div style={{ width:40,height:40,background:C.light,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18 }}>{app.internships?.company_logo||"🏢"}</div>
@@ -548,8 +627,8 @@ function StudentApplications({ userId }) {
               <StatusBadge status={app.status||"pending"} />
             </div>
             <div style={{ display:"flex",gap:8,borderTop:`1px solid ${C.border}`,paddingTop:10 }}>
-              {app.internships?.duration&&<Badge text={`⏱ ${app.internships.duration}`} color={C.muted} />}
-              {app.internships?.type&&<Badge text={app.internships.type} color={C.primary} />}
+              {app.internships?.duration && <Badge text={`⏱ ${app.internships.duration}`} color={C.muted} />}
+              {app.internships?.type && <Badge text={app.internships.type} color={C.primary} />}
             </div>
           </Card>
         ))
@@ -558,7 +637,7 @@ function StudentApplications({ userId }) {
   );
 }
 
-// ─── STUDENT: PROFIL ─────────────────────────────────────────────────────────
+// ─── STUDENT: PROFIL ──────────────────────────────────────────────────────────
 function StudentProfile({ profile, onUpdate }) {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ full_name:profile?.full_name||"", phone:profile?.phone||"", about:profile?.about||"", university:profile?.university||"", faculty:profile?.faculty||"", year:profile?.year||"" });
@@ -571,12 +650,12 @@ function StudentProfile({ profile, onUpdate }) {
     if (!profile?.id) return;
     setSaving(true);
     try {
-      const { error } = await supabase.from("profiles").update({...form, skills}).eq("id", profile.id);
+      const { error } = await supabase.from("profiles").update({ ...form, skills }).eq("id", profile.id);
       if (!error) {
-        if (onUpdate) onUpdate({...profile, ...form, skills});
+        if (onUpdate) onUpdate({ ...profile, ...form, skills });
         setEditing(false);
         setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
+        setTimeout(()=>setSaved(false), 2000);
       } else {
         alert("Saqlashda xato: " + error.message);
       }
@@ -591,17 +670,18 @@ function StudentProfile({ profile, onUpdate }) {
           {(profile?.full_name||"U")[0]}
         </div>
         <div style={{ fontWeight:700,fontSize:17,color:C.primary,marginBottom:4 }}>{profile?.full_name||"Ism kiritilmagan"}</div>
-        {profile?.university&&<div style={{ color:C.muted,fontSize:13,marginBottom:3 }}>{profile.university}</div>}
-        {profile?.faculty&&<div style={{ color:C.muted,fontSize:12 }}>{profile.faculty}{profile?.year&&` · ${profile.year}-kurs`}</div>}
-        {profile?.phone&&<div style={{ color:C.muted,fontSize:12,marginTop:3 }}>{profile.phone}</div>}
-        {profile?.about&&<div style={{ color:C.muted,fontSize:13,lineHeight:1.5,marginTop:8,padding:"0 8px" }}>{profile.about}</div>}
+        {profile?.university && <div style={{ color:C.muted,fontSize:13,marginBottom:3 }}>{profile.university}</div>}
+        {profile?.faculty && <div style={{ color:C.muted,fontSize:12 }}>{profile.faculty}{profile?.year&&` · ${profile.year}-kurs`}</div>}
+        {profile?.phone && <div style={{ color:C.muted,fontSize:12,marginTop:3 }}>{profile.phone}</div>}
+        {profile?.about && <div style={{ color:C.muted,fontSize:13,lineHeight:1.5,marginTop:8,padding:"0 8px" }}>{profile.about}</div>}
       </Card>
 
       <Card style={{ marginBottom:12 }}>
         <h4 style={{ margin:"0 0 12px",fontWeight:700,fontSize:14,color:C.primary }}>Ko'nikmalar</h4>
         <div style={{ display:"flex",flexWrap:"wrap",gap:6,marginBottom:10 }}>
-          {skills.length===0?<span style={{ fontSize:12,color:C.muted }}>Ko'nikma qo'shing</span>
-            :skills.map(s=>(
+          {skills.length===0
+            ? <span style={{ fontSize:12,color:C.muted }}>Ko'nikma qo'shing</span>
+            : skills.map(s=>(
               <span key={s} onClick={()=>setSkills(skills.filter(sk=>sk!==s))} style={{ background:C.accent+"15",color:C.accent,padding:"4px 11px",borderRadius:18,fontSize:12,fontWeight:600,cursor:"pointer" }}>{s} ×</span>
             ))
           }
@@ -612,9 +692,11 @@ function StudentProfile({ profile, onUpdate }) {
         </div>
       </Card>
 
-      <Btn full onClick={()=>setEditing(!editing)} color={editing?C.muted:C.primary} style={{ marginBottom:10 }}>{editing?"Bekor":"Profilni tahrirlash"}</Btn>
-      {saved&&<div style={{ background:C.green+"15",color:C.green,padding:"10px 14px",borderRadius:10,fontSize:13,marginBottom:10,textAlign:"center",fontWeight:600 }}>Saqlandi!</div>}
-      {editing&&(
+      <Btn full onClick={()=>setEditing(!editing)} color={editing?C.muted:C.primary} style={{ marginBottom:10 }}>
+        {editing?"Bekor":"Profilni tahrirlash"}
+      </Btn>
+      {saved && <div style={{ background:C.green+"15",color:C.green,padding:"10px 14px",borderRadius:10,fontSize:13,marginBottom:10,textAlign:"center",fontWeight:600 }}>Saqlandi!</div>}
+      {editing && (
         <Card style={{ border:`1.5px solid ${C.accent}` }}>
           <Input label="Ism Familiya" value={form.full_name} onChange={e=>setForm({...form,full_name:e.target.value})} />
           <Input label="Universitet" value={form.university} onChange={e=>setForm({...form,university:e.target.value})} />
@@ -629,7 +711,7 @@ function StudentProfile({ profile, onUpdate }) {
   );
 }
 
-// ─── STUDENT: CV ─────────────────────────────────────────────────────────────
+// ─── STUDENT: CV ──────────────────────────────────────────────────────────────
 function StudentCV({ profile }) {
   const [exps, setExps] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -639,14 +721,17 @@ function StudentCV({ profile }) {
     if(!profile?.id){setLoading(false);return;}
     (async()=>{
       setLoading(true);
-      try { const{data}=await supabase.from("experiences").select("*").eq("student_id",profile.id); setExps(data||[]); }
-      catch{}
+      try { const { data } = await supabase.from("experiences").select("*").eq("student_id",profile.id); setExps(data||[]); }
+      catch {}
       setLoading(false);
     })();
   },[profile]);
 
-  const allSkills=[...(new Set([...(profile?.skills||[]),...exps.flatMap(e=>e.skills||[])]))];
-  const score=Math.min(100,(profile?.full_name?15:0)+(profile?.about?15:0)+(profile?.phone?10:0)+(profile?.university?10:0)+(allSkills.length>0?10:0)+exps.length*20);
+  const allSkills = [...new Set([...(profile?.skills||[]), ...exps.flatMap(e=>e.skills||[])])];
+  const score = Math.min(100,
+    (profile?.full_name?15:0)+(profile?.about?15:0)+(profile?.phone?10:0)+
+    (profile?.university?10:0)+(allSkills.length>0?10:0)+exps.length*20
+  );
 
   return (
     <div style={{ padding:"16px 0" }}>
@@ -669,9 +754,9 @@ function StudentCV({ profile }) {
         ))}
       </div>
 
-      {loading&&<Spinner />}
+      {loading && <Spinner />}
 
-      {!loading&&tab==="preview"&&(
+      {!loading && tab==="preview" && (
         <Card>
           <div style={{ background:C.primary,margin:"-16px -16px 14px",padding:16,borderRadius:"14px 14px 0 0",display:"flex",gap:12,alignItems:"center" }}>
             <div style={{ width:44,height:44,background:C.accent,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:"#fff",fontWeight:700 }}>{(profile?.full_name||"U")[0]}</div>
@@ -680,14 +765,14 @@ function StudentCV({ profile }) {
               <div style={{ color:C.accent,fontSize:11 }}>{profile?.university||"Universitetingiz"}</div>
             </div>
           </div>
-          {profile?.about&&<p style={{ fontSize:13,color:C.muted,lineHeight:1.6,margin:"0 0 12px" }}>{profile.about}</p>}
-          {allSkills.length>0&&(
+          {profile?.about && <p style={{ fontSize:13,color:C.muted,lineHeight:1.6,margin:"0 0 12px" }}>{profile.about}</p>}
+          {allSkills.length>0 && (
             <div style={{ marginBottom:12 }}>
               <div style={{ fontWeight:700,fontSize:11,color:C.primary,marginBottom:8,letterSpacing:"0.5px" }}>KO'NIKMALAR</div>
               <div style={{ display:"flex",flexWrap:"wrap",gap:5 }}>{allSkills.map(s=><Badge key={s} text={s} color={C.accent} />)}</div>
             </div>
           )}
-          {exps.length>0&&(
+          {exps.length>0 && (
             <div>
               <div style={{ fontWeight:700,fontSize:11,color:C.primary,marginBottom:8,letterSpacing:"0.5px" }}>AMALIYOT TAJRIBASI</div>
               {exps.map(exp=>(
@@ -699,14 +784,18 @@ function StudentCV({ profile }) {
               ))}
             </div>
           )}
-          {exps.length===0&&allSkills.length===0&&<div style={{ textAlign:"center",padding:20,color:C.muted,fontSize:13 }}>Profilni to'ldiring va amaliyot o'ting</div>}
+          {exps.length===0 && allSkills.length===0 && <div style={{ textAlign:"center",padding:20,color:C.muted,fontSize:13 }}>Profilni to'ldiring va amaliyot o'ting</div>}
         </Card>
       )}
-      {!loading&&tab==="experience"&&(
+
+      {!loading && tab==="experience" && (
         <div>
-          <div style={{ background:C.accent+"12",border:`1px solid ${C.accent}30`,borderRadius:10,padding:"10px 14px",marginBottom:12,fontSize:13 }}><strong>Avtomatik</strong> — har amaliyot tugagach qo'shiladi</div>
-          {exps.length===0?<div style={{ textAlign:"center",padding:28,color:C.muted,fontSize:13 }}>Hali tajriba yo'q</div>
-            :exps.map(exp=>(
+          <div style={{ background:C.accent+"12",border:`1px solid ${C.accent}30`,borderRadius:10,padding:"10px 14px",marginBottom:12,fontSize:13 }}>
+            <strong>Avtomatik</strong> — har amaliyot tugagach qo'shiladi
+          </div>
+          {exps.length===0
+            ? <Empty title="Hali tajriba yo'q" sub="Amaliyot tugagach bu yerda ko'rinadi" />
+            : exps.map(exp=>(
               <Card key={exp.id} style={{ marginBottom:10 }}>
                 <div style={{ fontWeight:700,fontSize:14,marginBottom:4,color:C.primary }}>{exp.role}</div>
                 <div style={{ color:C.muted,fontSize:12,marginBottom:8 }}>{exp.company_name} · {exp.period}</div>
@@ -716,11 +805,12 @@ function StudentCV({ profile }) {
           }
         </div>
       )}
-      {!loading&&tab==="recs"&&(
+
+      {!loading && tab==="recs" && (
         <div>
           {exps.filter(e=>e.recommendation).length===0
-            ?<div style={{ textAlign:"center",padding:"28px 16px",color:C.muted }}><div style={{ fontWeight:600,marginBottom:6,fontSize:14 }}>Tavsiyalar bu yerda ko'rinadi</div><div style={{ fontSize:12 }}>Amaliyot tugagach tadbirkor tavsiya beradi</div></div>
-            :exps.filter(e=>e.recommendation).map(exp=>(
+            ? <Empty title="Tavsiyalar bu yerda ko'rinadi" sub="Amaliyot tugagach tadbirkor tavsiya beradi" />
+            : exps.filter(e=>e.recommendation).map(exp=>(
               <Card key={exp.id} style={{ marginBottom:10 }}>
                 <div style={{ fontWeight:700,fontSize:14,marginBottom:4 }}>{exp.company_name}</div>
                 <div style={{ background:C.light,borderRadius:9,padding:"10px 12px",marginBottom:8,borderLeft:`3px solid ${C.gold}` }}>
@@ -736,7 +826,7 @@ function StudentCV({ profile }) {
   );
 }
 
-// ─── COMPANY: PANEL ──────────────────────────────────────────────────────────
+// ─── COMPANY: PANEL ───────────────────────────────────────────────────────────
 function CompanyHome({ profile }) {
   const [stats, setStats] = useState({ internships:0, applications:0, accepted:0 });
   const [loading, setLoading] = useState(true);
@@ -746,12 +836,16 @@ function CompanyHome({ profile }) {
     (async()=>{
       setLoading(true);
       try {
-        const{data:int}=await supabase.from("internships").select("id").eq("company_id",profile.id);
-        const ids=(int||[]).map(i=>i.id);
-        let apps=[],acc=0;
-        if(ids.length){const{data}=await supabase.from("applications").select("id,status").in("internship_id",ids);apps=data||[];acc=apps.filter(a=>a.status==="accepted").length;}
-        setStats({internships:int?.length||0,applications:apps.length,accepted:acc});
-      }catch{}
+        const { data:int } = await supabase.from("internships").select("id").eq("company_id",profile.id);
+        const ids = (int||[]).map(i=>i.id);
+        let apps=[], acc=0;
+        if(ids.length){
+          const { data } = await supabase.from("applications").select("id,status").in("internship_id",ids);
+          apps = data||[];
+          acc = apps.filter(a=>a.status==="accepted").length;
+        }
+        setStats({ internships:int?.length||0, applications:apps.length, accepted:acc });
+      } catch {}
       setLoading(false);
     })();
   },[profile]);
@@ -762,7 +856,7 @@ function CompanyHome({ profile }) {
         <div style={{ color:"#fff",fontWeight:700,fontSize:17,marginBottom:4 }}>Tadbirkor Panel</div>
         <div style={{ color:"rgba(255,255,255,0.75)",fontSize:13 }}>{profile?.company_name||profile?.full_name}</div>
       </Card>
-      {loading?<Spinner/>:(
+      {loading ? <Spinner /> : (
         <div style={{ display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:16 }}>
           {[{l:"E'lonlar",v:stats.internships,c:C.accent},{l:"Arizalar",v:stats.applications,c:C.gold},{l:"Qabul",v:stats.accepted,c:C.green}].map(s=>(
             <Card key={s.l} style={{ textAlign:"center",padding:14 }}>
@@ -785,7 +879,7 @@ function CompanyHome({ profile }) {
   );
 }
 
-// ─── COMPANY: E'LONLAR ───────────────────────────────────────────────────────
+// ─── COMPANY: E'LONLAR ────────────────────────────────────────────────────────
 function CompanyInternships({ profile }) {
   const [items, setItems] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -796,32 +890,54 @@ function CompanyInternships({ profile }) {
   const load = async () => {
     if(!profile?.id){setLoading(false);return;}
     setLoading(true);
-    try { const{data}=await supabase.from("internships").select("*").eq("company_id",profile.id).order("created_at",{ascending:false}); setItems(data||[]); }
-    catch{}
+    try {
+      const { data } = await supabase.from("internships").select("*").eq("company_id",profile.id).order("created_at",{ascending:false});
+      setItems(data||[]);
+    } catch {}
     setLoading(false);
   };
 
-  useEffect(()=>{load();},[profile]);
+  useEffect(()=>{ load(); },[profile]);
 
   const post = async () => {
-    if(!form.role||!profile?.id)return;
+    if(!form.role.trim()||!profile?.id) return;
     setPosting(true);
     try {
-      await supabase.from("internships").insert({ company_id:profile.id, company_name:profile.company_name||profile.full_name, company_logo:"🏢", role:form.role, description:form.description, skills:form.skills.split(",").map(s=>s.trim()).filter(Boolean), duration:form.duration, type:form.type, is_active:true });
-      setForm({role:"",description:"",skills:"",duration:"",type:"Ofis"});
-      setShowForm(false); await load();
-    }catch{}
+      const { error } = await supabase.from("internships").insert({
+        company_id: profile.id,
+        company_name: profile.company_name||profile.full_name,
+        company_logo: "🏢",
+        role: form.role,
+        description: form.description,
+        skills: form.skills.split(",").map(s=>s.trim()).filter(Boolean),
+        duration: form.duration,
+        type: form.type,
+        is_active: true,
+      });
+      if (error) { alert("E'lon joylashda xato: " + error.message); }
+      else {
+        setForm({ role:"", description:"", skills:"", duration:"", type:"Ofis" });
+        setShowForm(false);
+        await load();
+      }
+    } catch (err) { alert("Xato: " + err.message); }
     setPosting(false);
   };
 
-  const toggle = async (id, cur) => { await supabase.from("internships").update({is_active:!cur}).eq("id",id); await load(); };
+  const toggle = async (id, cur) => {
+    const { error } = await supabase.from("internships").update({ is_active:!cur }).eq("id",id);
+    if (!error) await load();
+  };
+
   const f = k => ({ value:form[k], onChange:e=>setForm({...form,[k]:e.target.value}) });
 
   return (
     <div style={{ padding:"16px 0" }}>
       <SectionHeader title="E'lonlarim" sub={`${items.length} ta amaliyot`} />
-      <Btn full onClick={()=>setShowForm(!showForm)} color={showForm?C.muted:C.accent} style={{ marginBottom:12 }}>{showForm?"Bekor":"+ Yangi amaliyot"}</Btn>
-      {showForm&&(
+      <Btn full onClick={()=>setShowForm(!showForm)} color={showForm?C.muted:C.accent} style={{ marginBottom:12 }}>
+        {showForm?"Bekor":"+ Yangi amaliyot"}
+      </Btn>
+      {showForm && (
         <Card style={{ marginBottom:12,border:`1.5px solid ${C.accent}` }}>
           <h4 style={{ margin:"0 0 14px",fontWeight:700,fontSize:14 }}>Yangi amaliyot</h4>
           <Input label="Lavozim *" {...f("role")} placeholder="Marketing Intern" />
@@ -834,23 +950,31 @@ function CompanyInternships({ profile }) {
               {["Ofis","Remote","Gibrid"].map(t=><option key={t}>{t}</option>)}
             </select>
           </div>
-          <Btn full onClick={post} color={C.green} disabled={posting||!form.role}>{posting?"Joylashtirilmoqda...":"Joylashtirish"}</Btn>
+          <Btn full onClick={post} color={C.green} disabled={posting||!form.role}>
+            {posting?"Joylashtirilmoqda...":"Joylashtirish"}
+          </Btn>
         </Card>
       )}
-      {loading?<Spinner/>:items.length===0&&!showForm
-        ?<div style={{ textAlign:"center",padding:32,color:C.muted,border:`1px dashed ${C.border}`,borderRadius:12 }}><div style={{ fontWeight:600,marginBottom:6 }}>Hali e'lon yo'q</div><div style={{ fontSize:12 }}>Birinchi amaliyotingizni joylashtiring</div></div>
-        :items.map(item=>(
+      {loading ? <Spinner /> : items.length===0&&!showForm
+        ? <Empty title="Hali e'lon yo'q" sub="Birinchi amaliyotingizni joylashtiring" />
+        : items.map(item=>(
           <Card key={item.id} style={{ marginBottom:10 }}>
             <div style={{ display:"flex",justifyContent:"space-between",marginBottom:8 }}>
               <div>
                 <div style={{ fontWeight:700,fontSize:14,color:C.primary }}>{item.role}</div>
                 <div style={{ fontSize:12,color:C.muted }}>{item.type} · {item.duration}</div>
               </div>
-              <span style={{ fontSize:10,fontWeight:600,padding:"3px 9px",borderRadius:20,background:item.is_active?C.green+"18":C.red+"18",color:item.is_active?C.green:C.red }}>{item.is_active?"Faol":"To'xtatildi"}</span>
+              <span style={{ fontSize:10,fontWeight:600,padding:"3px 9px",borderRadius:20,background:item.is_active?C.green+"18":C.red+"18",color:item.is_active?C.green:C.red }}>
+                {item.is_active?"Faol":"To'xtatildi"}
+              </span>
             </div>
-            {item.description&&<div style={{ fontSize:12,color:C.muted,marginBottom:8,lineHeight:1.5 }}>{item.description}</div>}
-            <div style={{ display:"flex",flexWrap:"wrap",gap:5,marginBottom:10 }}>{(item.skills||[]).map(s=><Badge key={s} text={s} color="#6366F1" />)}</div>
-            <Btn small onClick={()=>toggle(item.id,item.is_active)} color={item.is_active?C.muted:C.green} outline>{item.is_active?"To'xtatish":"Faollashtirish"}</Btn>
+            {item.description && <div style={{ fontSize:12,color:C.muted,marginBottom:8,lineHeight:1.5 }}>{item.description}</div>}
+            <div style={{ display:"flex",flexWrap:"wrap",gap:5,marginBottom:10 }}>
+              {(item.skills||[]).map(s=><Badge key={s} text={s} color="#6366F1" />)}
+            </div>
+            <Btn small onClick={()=>toggle(item.id,item.is_active)} color={item.is_active?C.muted:C.green} outline>
+              {item.is_active?"To'xtatish":"Faollashtirish"}
+            </Btn>
           </Card>
         ))
       }
@@ -858,7 +982,7 @@ function CompanyInternships({ profile }) {
   );
 }
 
-// ─── COMPANY: ARIZALAR ───────────────────────────────────────────────────────
+// ─── COMPANY: ARIZALAR ────────────────────────────────────────────────────────
 function CompanyApplications({ profile }) {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -870,22 +994,32 @@ function CompanyApplications({ profile }) {
     if(!profile?.id){setLoading(false);return;}
     setLoading(true);
     try {
-      const{data:int}=await supabase.from("internships").select("id,role").eq("company_id",profile.id);
+      const { data:int } = await supabase.from("internships").select("id,role").eq("company_id",profile.id);
       if(int?.length){
-        const ids=int.map(i=>i.id);
-        const{data}=await supabase.from("applications").select("*, profiles(full_name,university,phone,skills,about,faculty,year), internships(role,duration,type)").in("internship_id",ids).order("created_at",{ascending:false});
+        const ids = int.map(i=>i.id);
+        const { data } = await supabase.from("applications")
+          .select("*, profiles(full_name,university,phone,skills,about,faculty,year), internships(role,duration,type)")
+          .in("internship_id",ids)
+          .order("created_at",{ascending:false});
         setApplications(data||[]);
+      } else {
+        setApplications([]);
       }
-    }catch{}
+    } catch {}
     setLoading(false);
   };
 
-  useEffect(()=>{load();},[profile]);
+  useEffect(()=>{ load(); },[profile]);
 
   const updateStatus = async (id, status) => {
     setUpdating(id);
-    try { await supabase.from("applications").update({status}).eq("id",id); setApplications(prev=>prev.map(a=>a.id===id?{...a,status}:a)); if(selected?.id===id)setSelected(prev=>({...prev,status})); }
-    catch{}
+    try {
+      const { error } = await supabase.from("applications").update({ status }).eq("id",id);
+      if (!error) {
+        setApplications(prev=>prev.map(a=>a.id===id?{...a,status}:a));
+        if(selected?.id===id) setSelected(prev=>({...prev,status}));
+      }
+    } catch {}
     setUpdating(null);
   };
 
@@ -898,30 +1032,35 @@ function CompanyApplications({ profile }) {
         <button onClick={()=>setSelected(null)} style={{ background:"none",border:"none",color:C.accent,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",marginBottom:14,padding:0 }}>← Orqaga</button>
         <Card style={{ marginBottom:12 }}>
           <div style={{ display:"flex",gap:12,alignItems:"center",marginBottom:14 }}>
-            <div style={{ width:52,height:52,background:C.accent+"20",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,color:C.accent,fontWeight:700 }}>{(p?.full_name||"T")[0]}</div>
+            <div style={{ width:52,height:52,background:C.accent+"20",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,color:C.accent,fontWeight:700 }}>
+              {(p?.full_name||"T")[0]}
+            </div>
             <div>
               <div style={{ fontWeight:700,fontSize:16,color:C.primary }}>{p?.full_name||"Ism yo'q"}</div>
               <div style={{ color:C.muted,fontSize:13 }}>{p?.university||"—"}</div>
-              {p?.faculty&&<div style={{ color:C.muted,fontSize:12 }}>{p.faculty}{p?.year&&` · ${p.year}-kurs`}</div>}
+              {p?.faculty && <div style={{ color:C.muted,fontSize:12 }}>{p.faculty}{p?.year&&` · ${p.year}-kurs`}</div>}
             </div>
           </div>
           <div style={{ borderTop:`1px solid ${C.border}`,paddingTop:12,marginBottom:12 }}>
             <div style={{ fontSize:13,color:C.muted,marginBottom:4 }}>Lavozim: <strong style={{ color:C.primary }}>{selected.internships?.role}</strong></div>
             <div style={{ fontSize:13,color:C.muted,marginBottom:4 }}>{selected.internships?.type} · {selected.internships?.duration}</div>
-            <div style={{ display:"flex",alignItems:"center",gap:8,marginTop:8 }}><span style={{ fontSize:12,color:C.muted }}>Holat:</span><StatusBadge status={selected.status||"pending"} /></div>
+            <div style={{ display:"flex",alignItems:"center",gap:8,marginTop:8 }}>
+              <span style={{ fontSize:12,color:C.muted }}>Holat:</span>
+              <StatusBadge status={selected.status||"pending"} />
+            </div>
           </div>
-          {p?.about&&<div style={{ borderTop:`1px solid ${C.border}`,paddingTop:12,marginBottom:12 }}><div style={{ fontWeight:600,fontSize:13,marginBottom:6,color:C.primary }}>O'zi haqida:</div><div style={{ fontSize:13,color:C.muted,lineHeight:1.6 }}>{p.about}</div></div>}
-          {p?.skills?.length>0&&<div style={{ borderTop:`1px solid ${C.border}`,paddingTop:12,marginBottom:12 }}><div style={{ fontWeight:600,fontSize:13,marginBottom:8,color:C.primary }}>Ko'nikmalar:</div><div style={{ display:"flex",flexWrap:"wrap",gap:6 }}>{p.skills.map(s=><Badge key={s} text={s} color={C.accent} />)}</div></div>}
-          {p?.phone&&<div style={{ borderTop:`1px solid ${C.border}`,paddingTop:12,marginBottom:12 }}><div style={{ fontSize:13,color:C.muted }}>Telefon: <strong style={{ color:C.primary }}>{p.phone}</strong></div></div>}
+          {p?.about && <div style={{ borderTop:`1px solid ${C.border}`,paddingTop:12,marginBottom:12 }}><div style={{ fontWeight:600,fontSize:13,marginBottom:6,color:C.primary }}>O'zi haqida:</div><div style={{ fontSize:13,color:C.muted,lineHeight:1.6 }}>{p.about}</div></div>}
+          {p?.skills?.length>0 && <div style={{ borderTop:`1px solid ${C.border}`,paddingTop:12,marginBottom:12 }}><div style={{ fontWeight:600,fontSize:13,marginBottom:8,color:C.primary }}>Ko'nikmalar:</div><div style={{ display:"flex",flexWrap:"wrap",gap:6 }}>{p.skills.map(s=><Badge key={s} text={s} color={C.accent} />)}</div></div>}
+          {p?.phone && <div style={{ borderTop:`1px solid ${C.border}`,paddingTop:12,marginBottom:12 }}><div style={{ fontSize:13,color:C.muted }}>Telefon: <strong style={{ color:C.primary }}>{p.phone}</strong></div></div>}
         </Card>
-        {(!selected.status||selected.status==="pending")&&(
+        {(!selected.status||selected.status==="pending") && (
           <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:10 }}>
             <Btn onClick={()=>updateStatus(selected.id,"accepted")} color={C.green} disabled={updating===selected.id}>{updating===selected.id?"...":"Qabul qilish"}</Btn>
             <Btn onClick={()=>updateStatus(selected.id,"rejected")} color={C.red} disabled={updating===selected.id}>{updating===selected.id?"...":"Rad etish"}</Btn>
           </div>
         )}
-        {selected.status==="accepted"&&<div style={{ background:C.green+"15",border:`1px solid ${C.green}30`,borderRadius:10,padding:"12px 16px",textAlign:"center",color:C.green,fontWeight:600,fontSize:14 }}>Qabul qilingan</div>}
-        {selected.status==="rejected"&&<Btn full onClick={()=>updateStatus(selected.id,"pending")} color={C.muted} outline>Qayta ko'rib chiqish</Btn>}
+        {selected.status==="accepted" && <div style={{ background:C.green+"15",border:`1px solid ${C.green}30`,borderRadius:10,padding:"12px 16px",textAlign:"center",color:C.green,fontWeight:600,fontSize:14 }}>Qabul qilingan</div>}
+        {selected.status==="rejected" && <Btn full onClick={()=>updateStatus(selected.id,"pending")} color={C.muted} outline>Qayta ko'rib chiqish</Btn>}
       </div>
     );
   }
@@ -934,13 +1073,18 @@ function CompanyApplications({ profile }) {
           <button key={v} onClick={()=>setFilterStatus(v)} style={{ background:filterStatus===v?C.primary:"#fff",color:filterStatus===v?"#fff":C.muted,border:`1px solid ${filterStatus===v?C.primary:C.border}`,padding:"5px 14px",borderRadius:18,cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"inherit" }}>{l}</button>
         ))}
       </div>
-      {loading?<Spinner/>:filtered.length===0
-        ?<div style={{ textAlign:"center",padding:32,color:C.muted,border:`1px dashed ${C.border}`,borderRadius:12 }}><div style={{ fontWeight:600,marginBottom:6 }}>Ariza yo'q</div><div style={{ fontSize:12 }}>Talabalar ariza berganda bu yerda ko'rinadi</div></div>
-        :filtered.map(app=>(
-          <Card key={app.id} onClick={()=>setSelected(app)} style={{ marginBottom:10,cursor:"pointer" }} onMouseEnter={e=>e.currentTarget.style.boxShadow="0 4px 16px rgba(0,0,0,0.08)"} onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}>
+      {loading ? <Spinner /> : filtered.length===0
+        ? <Empty title="Ariza yo'q" sub="Talabalar ariza berganda bu yerda ko'rinadi" />
+        : filtered.map(app=>(
+          <Card key={app.id} onClick={()=>setSelected(app)} style={{ marginBottom:10,cursor:"pointer" }}
+            onMouseEnter={e=>e.currentTarget.style.boxShadow="0 4px 16px rgba(0,0,0,0.08)"}
+            onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}
+          >
             <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center" }}>
               <div style={{ display:"flex",gap:10,alignItems:"center" }}>
-                <div style={{ width:40,height:40,background:C.accent+"20",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:C.accent,fontWeight:700 }}>{(app.profiles?.full_name||"T")[0]}</div>
+                <div style={{ width:40,height:40,background:C.accent+"20",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:C.accent,fontWeight:700 }}>
+                  {(app.profiles?.full_name||"T")[0]}
+                </div>
                 <div>
                   <div style={{ fontWeight:700,fontSize:14,color:C.primary }}>{app.profiles?.full_name||"Ism yo'q"}</div>
                   <div style={{ fontSize:12,color:C.muted }}>{app.internships?.role} · {app.profiles?.university||"—"}</div>
@@ -958,7 +1102,7 @@ function CompanyApplications({ profile }) {
   );
 }
 
-// ─── ADMIN: FOYDALANUVCHILAR ─────────────────────────────────────────────────
+// ─── ADMIN: FOYDALANUVCHILAR ──────────────────────────────────────────────────
 function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -967,15 +1111,23 @@ function AdminUsers() {
   useEffect(()=>{
     (async()=>{
       setLoading(true);
-      try { const{data}=await supabase.from("profiles").select("*").order("created_at",{ascending:false}); setUsers(data||[]); }
-      catch{}
+      try {
+        const { data } = await supabase.from("profiles").select("*").order("created_at",{ascending:false});
+        setUsers(data||[]);
+      } catch {}
       setLoading(false);
     })();
   },[]);
 
-  const filtered=users.filter(u=>!search||u.full_name?.toLowerCase().includes(search.toLowerCase())||u.email?.toLowerCase().includes(search.toLowerCase())||u.university?.toLowerCase().includes(search.toLowerCase()));
-  const students=users.filter(u=>u.role!=="company");
-  const companies=users.filter(u=>u.role==="company");
+  const filtered = users.filter(u=>
+    !search ||
+    u.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+    u.email?.toLowerCase().includes(search.toLowerCase()) ||
+    u.university?.toLowerCase().includes(search.toLowerCase()) ||
+    u.company_name?.toLowerCase().includes(search.toLowerCase())
+  );
+  const students = users.filter(u=>u.role!=="company");
+  const companies = users.filter(u=>u.role==="company");
 
   return (
     <div style={{ padding:"16px 0" }}>
@@ -988,22 +1140,27 @@ function AdminUsers() {
           </Card>
         ))}
       </div>
-      <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Qidirish..." style={{ width:"100%",border:`1px solid ${C.border}`,borderRadius:10,padding:"10px 14px",fontSize:13,outline:"none",boxSizing:"border-box",fontFamily:"inherit",marginBottom:12,background:"#fff" }} />
-      {loading?<Spinner/>:filtered.map(u=>(
-        <Card key={u.id} style={{ marginBottom:8 }}>
-          <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center" }}>
-            <div style={{ display:"flex",gap:10,alignItems:"center" }}>
-              <div style={{ width:38,height:38,background:u.role==="company"?C.gold+"20":C.accent+"20",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:u.role==="company"?C.gold:C.accent,fontWeight:700 }}>{(u.full_name||u.email||"U")[0]}</div>
-              <div>
-                <div style={{ fontWeight:600,fontSize:13,color:C.primary }}>{u.full_name||"—"}</div>
-                <div style={{ fontSize:11,color:C.muted }}>{u.university||u.company_name||u.email||"—"}</div>
-                {u.email && <div style={{ fontSize:10,color:C.muted,marginTop:1 }}>{u.email}</div>}
+      <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Ism, email yoki kompaniya..." style={{ width:"100%",border:`1px solid ${C.border}`,borderRadius:10,padding:"10px 14px",fontSize:13,outline:"none",boxSizing:"border-box",fontFamily:"inherit",marginBottom:12,background:"#fff" }} />
+      {loading ? <Spinner /> : filtered.length===0
+        ? <Empty title="Hech narsa topilmadi" />
+        : filtered.map(u=>(
+          <Card key={u.id} style={{ marginBottom:8 }}>
+            <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center" }}>
+              <div style={{ display:"flex",gap:10,alignItems:"center" }}>
+                <div style={{ width:38,height:38,background:u.role==="company"?C.gold+"20":C.accent+"20",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:u.role==="company"?C.gold:C.accent,fontWeight:700 }}>
+                  {(u.full_name||u.email||"U")[0]}
+                </div>
+                <div>
+                  <div style={{ fontWeight:600,fontSize:13,color:C.primary }}>{u.full_name||"—"}</div>
+                  <div style={{ fontSize:11,color:C.muted }}>{u.university||u.company_name||"—"}</div>
+                  {u.email && <div style={{ fontSize:10,color:C.muted,marginTop:1 }}>{u.email}</div>}
+                </div>
               </div>
+              <Badge text={u.role==="company"?"Tadbirkor":"Talaba"} color={u.role==="company"?C.gold:C.accent} />
             </div>
-            <Badge text={u.role==="company"?"Tadbirkor":"Talaba"} color={u.role==="company"?C.gold:C.accent} />
-          </div>
-        </Card>
-      ))}
+          </Card>
+        ))
+      }
     </div>
   );
 }
@@ -1013,32 +1170,47 @@ function AdminInternships() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(()=>{
-    (async()=>{
-      setLoading(true);
-      try { const{data}=await supabase.from("internships").select("*").order("created_at",{ascending:false}); setItems(data?.length?data:MOCK_INTERNSHIPS); }
-      catch{setItems(MOCK_INTERNSHIPS);}
-      setLoading(false);
-    })();
-  },[]);
+  const load = async () => {
+    setLoading(true);
+    try {
+      const { data } = await supabase.from("internships").select("*").order("created_at",{ascending:false});
+      setItems(data?.length ? data : MOCK_INTERNSHIPS);
+    } catch { setItems(MOCK_INTERNSHIPS); }
+    setLoading(false);
+  };
 
-  const toggle=async(id,cur)=>{ await supabase.from("internships").update({is_active:!cur}).eq("id",id); setItems(prev=>prev.map(i=>i.id===id?{...i,is_active:!cur}:i)); };
-  const remove=async(id)=>{ if(!window.confirm("O'chirishni tasdiqlaysizmi?"))return; await supabase.from("internships").delete().eq("id",id); setItems(prev=>prev.filter(i=>i.id!==id)); };
+  useEffect(()=>{ load(); },[]);
+
+  const toggle = async (id, cur) => {
+    await supabase.from("internships").update({ is_active:!cur }).eq("id",id);
+    setItems(prev=>prev.map(i=>i.id===id?{...i,is_active:!cur}:i));
+  };
+
+  const remove = async (id) => {
+    if(!window.confirm("O'chirishni tasdiqlaysizmi?")) return;
+    const { error } = await supabase.from("internships").delete().eq("id",id);
+    if (!error) setItems(prev=>prev.filter(i=>i.id!==id));
+    else alert("O'chirishda xato: " + error.message);
+  };
 
   return (
     <div style={{ padding:"16px 0" }}>
       <SectionHeader title="Barcha amaliyotlar" sub={`${items.length} ta e'lon`} />
-      {loading?<Spinner/>:items.map(item=>(
+      {loading ? <Spinner /> : items.map(item=>(
         <Card key={item.id} style={{ marginBottom:10 }}>
           <div style={{ display:"flex",justifyContent:"space-between",marginBottom:8 }}>
             <div>
               <div style={{ fontWeight:700,fontSize:14,color:C.primary }}>{item.role}</div>
               <div style={{ fontSize:12,color:C.muted }}>{item.company_name} · {item.type}</div>
             </div>
-            <span style={{ fontSize:10,fontWeight:600,padding:"3px 9px",borderRadius:20,background:item.is_active?C.green+"18":C.red+"18",color:item.is_active?C.green:C.red }}>{item.is_active?"Faol":"To'xtatildi"}</span>
+            <span style={{ fontSize:10,fontWeight:600,padding:"3px 9px",borderRadius:20,background:item.is_active?C.green+"18":C.red+"18",color:item.is_active?C.green:C.red }}>
+              {item.is_active?"Faol":"To'xtatildi"}
+            </span>
           </div>
           <div style={{ display:"flex",gap:8 }}>
-            <Btn small onClick={()=>toggle(item.id,item.is_active)} color={item.is_active?C.muted:C.green} outline>{item.is_active?"To'xtatish":"Faollashtirish"}</Btn>
+            <Btn small onClick={()=>toggle(item.id,item.is_active)} color={item.is_active?C.muted:C.green} outline>
+              {item.is_active?"To'xtatish":"Faollashtirish"}
+            </Btn>
             <Btn small onClick={()=>remove(item.id)} color={C.red} outline>O'chirish</Btn>
           </div>
         </Card>
@@ -1047,7 +1219,7 @@ function AdminInternships() {
   );
 }
 
-// ─── ADMIN: ARIZALAR ─────────────────────────────────────────────────────────
+// ─── ADMIN: ARIZALAR ──────────────────────────────────────────────────────────
 function AdminApplications() {
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1056,16 +1228,24 @@ function AdminApplications() {
   useEffect(()=>{
     (async()=>{
       setLoading(true);
-      try { const{data}=await supabase.from("applications").select("*, profiles(full_name,university), internships(role,company_name)").order("created_at",{ascending:false}); setApps(data||[]); }
-      catch{}
+      try {
+        const { data } = await supabase.from("applications")
+          .select("*, profiles(full_name,university,email), internships(role,company_name)")
+          .order("created_at",{ascending:false});
+        setApps(data||[]);
+      } catch {}
       setLoading(false);
     })();
   },[]);
 
-  const updateStatus=async(id,status)=>{ await supabase.from("applications").update({status}).eq("id",id); setApps(prev=>prev.map(a=>a.id===id?{...a,status}:a)); };
-  const filtered=apps.filter(a=>filterStatus==="all"||(a.status||"pending")===filterStatus);
-  const pending=apps.filter(a=>!a.status||a.status==="pending").length;
-  const accepted=apps.filter(a=>a.status==="accepted").length;
+  const updateStatus = async (id, status) => {
+    const { error } = await supabase.from("applications").update({ status }).eq("id",id);
+    if (!error) setApps(prev=>prev.map(a=>a.id===id?{...a,status}:a));
+  };
+
+  const filtered = apps.filter(a=>filterStatus==="all"||(a.status||"pending")===filterStatus);
+  const pending = apps.filter(a=>!a.status||a.status==="pending").length;
+  const accepted = apps.filter(a=>a.status==="accepted").length;
 
   return (
     <div style={{ padding:"16px 0" }}>
@@ -1083,29 +1263,32 @@ function AdminApplications() {
           <button key={v} onClick={()=>setFilterStatus(v)} style={{ background:filterStatus===v?C.primary:"#fff",color:filterStatus===v?"#fff":C.muted,border:`1px solid ${filterStatus===v?C.primary:C.border}`,padding:"5px 14px",borderRadius:18,cursor:"pointer",fontSize:12,fontWeight:600,fontFamily:"inherit" }}>{l}</button>
         ))}
       </div>
-      {loading?<Spinner/>:filtered.map(app=>(
-        <Card key={app.id} style={{ marginBottom:10 }}>
-          <div style={{ display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10 }}>
-            <div>
-              <div style={{ fontWeight:700,fontSize:14,color:C.primary }}>{app.profiles?.full_name||"—"}</div>
-              <div style={{ fontSize:12,color:C.muted }}>{app.internships?.role} — {app.internships?.company_name}</div>
-              <div style={{ fontSize:11,color:C.muted,marginTop:2 }}>{app.profiles?.university||"—"}</div>
+      {loading ? <Spinner /> : filtered.length===0
+        ? <Empty title="Ariza yo'q" />
+        : filtered.map(app=>(
+          <Card key={app.id} style={{ marginBottom:10 }}>
+            <div style={{ display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10 }}>
+              <div>
+                <div style={{ fontWeight:700,fontSize:14,color:C.primary }}>{app.profiles?.full_name||"—"}</div>
+                <div style={{ fontSize:12,color:C.muted }}>{app.internships?.role} — {app.internships?.company_name}</div>
+                <div style={{ fontSize:11,color:C.muted,marginTop:2 }}>{app.profiles?.university||app.profiles?.email||"—"}</div>
+              </div>
+              <StatusBadge status={app.status||"pending"} />
             </div>
-            <StatusBadge status={app.status||"pending"} />
-          </div>
-          {(!app.status||app.status==="pending")&&(
-            <div style={{ display:"flex",gap:8 }}>
-              <Btn small onClick={()=>updateStatus(app.id,"accepted")} color={C.green}>Qabul</Btn>
-              <Btn small onClick={()=>updateStatus(app.id,"rejected")} color={C.red}>Rad</Btn>
-            </div>
-          )}
-        </Card>
-      ))}
+            {(!app.status||app.status==="pending") && (
+              <div style={{ display:"flex",gap:8 }}>
+                <Btn small onClick={()=>updateStatus(app.id,"accepted")} color={C.green}>Qabul</Btn>
+                <Btn small onClick={()=>updateStatus(app.id,"rejected")} color={C.red}>Rad</Btn>
+              </div>
+            )}
+          </Card>
+        ))
+      }
     </div>
   );
 }
 
-// ─── MAIN ─────────────────────────────────────────────────────────────────────
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -1115,42 +1298,41 @@ export default function App() {
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState("login");
 
-  // Fix 7: loadProfile ni useEffect DAN OLDIN e'lon qilish
-  const loadProfile = async (uid) => {
+  // loadProfile — email ni auth.user dan olish (profiles da bo'lmasligi mumkin)
+  const loadProfile = async (uid, userEmail) => {
     try {
-      const { data } = await supabase.from("profiles").select("*").eq("id", uid).single();
-      if (data) {
-        setProfile(data);
-        const isAdmin = data.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
-        if (isAdmin) setPage("admin_users");
-        else if (data.role === "company") setPage("company_home");
-        else setPage("home");
-      }
+      const { data } = await supabase.from("profiles").select("*").eq("id",uid).single();
+      const email = userEmail || data?.email || "";
+      const merged = data ? { ...data, email } : { id:uid, email, role:"student" };
+      setProfile(merged);
+      const isAdmin = email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+      if (isAdmin) setPage("admin_users");
+      else if (merged.role==="company") setPage("company_home");
+      else setPage("home");
     } catch {}
   };
 
   useEffect(()=>{
-    // Parol tiklash havolasi tekshiruvi
+    // Parol tiklash havolasini tekshirish
     const hash = window.location.hash;
-    if (hash.includes("type=recovery") || hash.includes("reset-password")) {
+    if (hash.includes("type=recovery") || hash.includes("access_token")) {
       setIsResetPassword(true);
+      setAuthLoading(false);
+      return;
     }
 
-    // Joriy sessiyani tekshirish
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) { setUser(session.user); loadProfile(session.user.id); }
+    // Joriy sessiya
+    supabase.auth.getSession().then(({ data:{ session } })=>{
+      if (session?.user) { setUser(session.user); loadProfile(session.user.id, session.user.email); }
       setAuthLoading(false);
     });
 
-    // Auth holat ozgarishini kuzatish
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "PASSWORD_RECOVERY") {
-        setIsResetPassword(true);
-        return;
-      }
+    // Auth o'zgarishlarini kuzatish
+    const { data:{ subscription } } = supabase.auth.onAuthStateChange((event, session)=>{
+      if (event==="PASSWORD_RECOVERY") { setIsResetPassword(true); return; }
       if (session?.user) {
         setUser(session.user);
-        loadProfile(session.user.id);
+        loadProfile(session.user.id, session.user.email);
         setShowAuth(false);
       } else {
         setUser(null);
@@ -1165,17 +1347,27 @@ export default function App() {
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null); setProfile(null); setPage("home"); setShowAuth(false);
+    window.location.hash = "";
   };
 
+  // Loading
   if (authLoading) return (
-    <div style={{ minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:C.light }}><Spinner /></div>
+    <div style={{ minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:C.light }}>
+      <Spinner />
+    </div>
   );
 
-  // Parol tiklash sahifasi
+  // Parol tiklash
   if (isResetPassword) return (
-    <ResetPasswordScreen onDone={() => { setIsResetPassword(false); setShowAuth(true); }} />
+    <ResetPasswordScreen onDone={()=>{
+      setIsResetPassword(false);
+      window.location.hash = "";
+      setAuthMode("login");
+      setShowAuth(true);
+    }} />
   );
 
+  // Landing
   if (!user && !showAuth) return (
     <LandingPage
       onLogin={()=>{ setAuthMode("login"); setShowAuth(true); }}
@@ -1183,8 +1375,13 @@ export default function App() {
     />
   );
 
+  // Auth
   if (showAuth) return (
-    <AuthScreen initialMode={authMode} onAuth={u=>{ setUser(u); loadProfile(u.id); }} onBack={()=>setShowAuth(false)} />
+    <AuthScreen
+      initialMode={authMode}
+      onAuth={u=>{ setUser(u); loadProfile(u.id, u.email); }}
+      onBack={()=>setShowAuth(false)}
+    />
   );
 
   const isAdmin = profile?.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
@@ -1192,26 +1389,26 @@ export default function App() {
 
   const renderPage = () => {
     if (isAdmin) {
-      if (page === "admin_users") return <AdminUsers />;
-      if (page === "admin_internships") return <AdminInternships />;
-      if (page === "admin_applications") return <AdminApplications />;
+      if (page==="admin_users") return <AdminUsers />;
+      if (page==="admin_internships") return <AdminInternships />;
+      if (page==="admin_applications") return <AdminApplications />;
       return <AdminUsers />;
     }
-    if (role === "company") {
-      if (page === "company_home") return <CompanyHome profile={profile} />;
-      if (page === "company_internships") return <CompanyInternships profile={profile} />;
-      if (page === "company_applications") return <CompanyApplications profile={profile} />;
+    if (role==="company") {
+      if (page==="company_home") return <CompanyHome profile={profile} />;
+      if (page==="company_internships") return <CompanyInternships profile={profile} />;
+      if (page==="company_applications") return <CompanyApplications profile={profile} />;
       return <CompanyHome profile={profile} />;
     }
-    if (page === "home") return <StudentHome userId={user?.id} />;
-    if (page === "my_applications") return <StudentApplications userId={user?.id} />;
-    if (page === "profile") return <StudentProfile profile={profile} onUpdate={setProfile} />;
-    if (page === "resume") return <StudentCV profile={profile} />;
+    if (page==="home") return <StudentHome userId={user?.id} />;
+    if (page==="my_applications") return <StudentApplications userId={user?.id} />;
+    if (page==="profile") return <StudentProfile profile={profile} onUpdate={setProfile} />;
+    if (page==="resume") return <StudentCV profile={profile} />;
     return <StudentHome userId={user?.id} />;
   };
 
   return (
-    <AuthContext.Provider value={{user, profile}}>
+    <AuthContext.Provider value={{ user, profile }}>
       <div style={{ fontFamily:"'DM Sans','Segoe UI',sans-serif", background:C.light, minHeight:"100vh", color:C.primary }}>
         <Navbar profile={profile} onLogout={logout} />
         <div style={{ maxWidth:520, margin:"0 auto", padding:"0 16px 90px" }}>
