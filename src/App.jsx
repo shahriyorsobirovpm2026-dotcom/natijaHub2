@@ -514,23 +514,36 @@ function InternshipCard({ item, userId }) {
   const [applied, setApplied] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Mock data tekshiruvi — faqat real Supabase amaliyotlarga ariza berish mumkin
+  const isMock = typeof item.id === "number" && item.id <= 100;
+
   const apply = async () => {
     if (!userId) { alert("Ariza berish uchun avval tizimga kiring!"); return; }
+    if (isMock) { alert("Bu namuna e'lon. Haqiqiy amaliyotlar tez kunda qo'shiladi!"); return; }
     setLoading(true);
     try {
-      const { error } = await supabase.from("applications").insert({ internship_id:item.id, student_id:userId, status:"pending" });
+      const { error } = await supabase.from("applications").insert({
+        internship_id: item.id,
+        student_id: userId,
+        status: "pending",
+      });
       if (error) {
-        if (error.code === "23505") setApplied(true); // allaqachon berilgan
-        else alert("Xato: " + error.message);
+        if (error.code === "23505") {
+          setApplied(true); // allaqachon berilgan
+        } else {
+          alert("Ariza berishda xato: " + error.message);
+        }
       } else {
         setApplied(true);
       }
-    } catch { alert("Ulanishda xato. Internet aloqasini tekshiring."); }
+    } catch (err) {
+      alert("Ulanishda xato: " + err.message);
+    }
     setLoading(false);
   };
 
   return (
-    <Card style={{ marginBottom:10 }}>
+    <Card style={{ marginBottom:10, opacity: isMock ? 0.7 : 1 }}>
       <div style={{ display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10 }}>
         <div style={{ display:"flex",gap:10,alignItems:"center" }}>
           <div style={{ width:40,height:40,background:C.light,borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18 }}>{item.company_logo||"🏢"}</div>
@@ -539,7 +552,10 @@ function InternshipCard({ item, userId }) {
             <div style={{ color:C.muted,fontSize:12 }}>{item.company_name}</div>
           </div>
         </div>
-        {item.type && <Badge text={item.type} color={C.primary} />}
+        <div style={{ display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4 }}>
+          {item.type && <Badge text={item.type} color={C.primary} />}
+          {isMock && <Badge text="Namuna" color={C.muted} />}
+        </div>
       </div>
       {item.description && <p style={{ fontSize:13,color:C.muted,lineHeight:1.5,margin:"0 0 10px" }}>{item.description}</p>}
       <div style={{ display:"flex",flexWrap:"wrap",gap:5,marginBottom:12 }}>
@@ -547,8 +563,8 @@ function InternshipCard({ item, userId }) {
       </div>
       <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center",borderTop:`1px solid ${C.border}`,paddingTop:10 }}>
         <span style={{ fontSize:12,color:C.muted }}>⏱ {item.duration||"—"}</span>
-        <Btn small onClick={apply} disabled={applied||loading} color={applied?C.green:C.primary}>
-          {loading?"...":applied?"Yuborildi":"Ariza berish"}
+        <Btn small onClick={apply} disabled={applied||loading||isMock} color={applied?C.green:isMock?C.muted:C.primary}>
+          {loading?"...":applied?"Yuborildi":isMock?"Namuna":"Ariza berish"}
         </Btn>
       </div>
     </Card>
@@ -991,21 +1007,52 @@ function CompanyApplications({ profile }) {
   const [filterStatus, setFilterStatus] = useState("all");
 
   const load = async () => {
-    if(!profile?.id){setLoading(false);return;}
+    if (!profile?.id) { setLoading(false); return; }
     setLoading(true);
     try {
-      const { data:int } = await supabase.from("internships").select("id,role").eq("company_id",profile.id);
-      if(int?.length){
-        const ids = int.map(i=>i.id);
-        const { data } = await supabase.from("applications")
-          .select("*, profiles(full_name,university,phone,skills,about,faculty,year), internships(role,duration,type)")
-          .in("internship_id",ids)
-          .order("created_at",{ascending:false});
-        setApplications(data||[]);
-      } else {
-        setApplications([]);
+      // 1. Bu tadbirkorning barcha internship ID lari
+      const { data:int, error:intErr } = await supabase
+        .from("internships")
+        .select("id,role")
+        .eq("company_id", profile.id);
+
+      if (intErr) {
+        console.error("Internships xato:", intErr.message);
+        setLoading(false);
+        return;
       }
-    } catch {}
+
+      if (!int?.length) {
+        // E'lon yo'q — ariza ham bo'lmaydi
+        setApplications([]);
+        setLoading(false);
+        return;
+      }
+
+      const ids = int.map(i => i.id);
+
+      // 2. Shu internship larga kelgan arizalar
+      const { data, error:appErr } = await supabase
+        .from("applications")
+        .select(`
+          id, status, created_at,
+          internship_id, student_id,
+          internships ( role, duration, type ),
+          profiles ( full_name, university, phone, skills, about, faculty, year )
+        `)
+        .in("internship_id", ids)
+        .order("created_at", { ascending: false });
+
+      if (appErr) {
+        console.error("Applications xato:", appErr.message, "Kod:", appErr.code);
+        // RLS xatosi bo'lishi mumkin
+        alert("Arizalarni yuklashda xato: " + appErr.message + "\n\nSupabase RLS policy kerak bo'lishi mumkin.");
+      } else {
+        setApplications(data || []);
+      }
+    } catch (err) {
+      console.error("Umumiy xato:", err);
+    }
     setLoading(false);
   };
 
